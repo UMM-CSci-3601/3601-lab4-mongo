@@ -3,7 +3,7 @@
 - [Getting started](#getting-started)
 - [Exploring the project](#exploring-the-project)
 - [Overview of the lab](#overview-of-the-lab)
-  - [Features to implement:](#features-to-implement)
+  - [Features to implement](#features-to-implement)
 - [Workflow and Continuous Integration](#workflow-and-continuous-integration)
 - [Writing todos to the Database](#writing-todos-to-the-database)
 - [Display todos](#display-todos)
@@ -46,7 +46,7 @@ Spend some time looking over the project with these questions in mind. (Unlike t
   but let Angular filter by category, body, or status.
 - **Do at least some filtering on the database side of things.**
 
-### Features to implement:
+### Features to implement
 
 - Filter todos by status
 - Filter todos by owner
