@@ -20,7 +20,7 @@ quality checks as described in
 
 ## Exploring the project
 
-The structure of this project should be nearly identical to that of lab #3, and as such there really isn't much excitement in that department.
+The structure of this project should be nearly identical to that of lab 3, and as such there really isn't much excitement in that department.
 
 The server is, for the most part, the same as it has been in the past two labs. The difference to look for here is in how the server gets the data it sends out in reply to requests.
 
@@ -45,7 +45,7 @@ Spend some time looking over the project with these questions in mind. (Unlike t
   but let Angular filter by category, body, or status.
 - **Do at least some filtering on the database side of things.**
 
-Features to implement:
+### Features to implement:
 
 - Filter Todos by status
 - Filter Todos by owner
