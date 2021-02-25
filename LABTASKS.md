@@ -59,7 +59,7 @@ Features to implement:
 
 ## Workflow and Continuous Integration
 
-You should organize your work into features, where each feature is an _epic_ in ZenHub. Each feature should "slice the cake", including server implementation and testing, Angular implementation and testing, and end-to-end testing.
+You should organize your work into features, where each feature is an (small) epic or a single story in ZenHub. Each feature should "slice the cake", including server implementation and testing, Angular implementation and testing, and end-to-end testing.
 
 :warning: Keep the features as small and focussed as
 possible. Otherwise things like code reviews become a huge burden,
@@ -67,6 +67,19 @@ and pull requests become far less useful.
 
 To maximize your learning, we strongly encourage you to implement features in Angular one at a time instead of copying over
 entire components from the previous lab that presumably support numerous features.
+
+Make sure you do frequent commits with useful commit messages.
+If you're pair programming (which we definitely recommend!) make
+sure include [a co-authorship line in the commit message](https://docs.github.com/en/github/committing-changes-to-your-project/creating-a-commit-with-multiple-authors) so the
+person you're working with gets credit. These have the form:
+
+```text
+ Co-authored-by: Connie Stewart <conniestewart@ohmnet.com>
+```
+
+where you replace the name ("Connie Stewart") and email
+("conniestewart@ohmnet.com") with the name and email of the
+person you're pairing with.
 
 - As you work, create a branch for a new feature.
   - Write tests for the server actions for the feature you added (run in the server folder using `./gradlew test` or `./gradlew test jacocoTestReport` as described in [README.md](./README.md#testing-the-server)). Then write the server code that makes those tests pass.
