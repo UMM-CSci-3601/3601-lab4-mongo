@@ -3,9 +3,10 @@
 - [Getting started](#getting-started)
 - [Exploring the project](#exploring-the-project)
 - [Overview of the lab](#overview-of-the-lab)
+  - [Features to implement:](#features-to-implement)
 - [Workflow and Continuous Integration](#workflow-and-continuous-integration)
-- [Writing Todos to the Database](#writing-todos-to-the-database)
-- [Display Todos](#display-todos)
+- [Writing todos to the Database](#writing-todos-to-the-database)
+- [Display todos](#display-todos)
 
 ## Getting started
 
@@ -39,22 +40,22 @@ Spend some time looking over the project with these questions in mind. (Unlike t
 
 ## Overview of the lab
 
-- Re-implement the ToDo API, this time pulling data from MongoDB rather than from a flat JSON file. The new elements of this lab are primarily in the MongoDB interaction, which is mostly in the Java server code.
-- When displaying the ToDos in your Angular front-end, make thoughtful decisions about whether work like filtering
-  should be done in Angular or via database queries. For example, have the database filter out all the ToDos belonging to a single user,
+- Re-implement the todo API, this time pulling data from MongoDB rather than from a flat JSON file. The new elements of this lab are primarily in the MongoDB interaction, which is mostly in the Java server code.
+- When displaying the todos in your Angular front-end, make thoughtful decisions about whether work like filtering
+  should be done in Angular or via database queries. For example, have the database filter out all the todos belonging to a single user,
   but let Angular filter by category, body, or status.
 - **Do at least some filtering on the database side of things.**
 
 ### Features to implement:
 
-- Filter Todos by status
-- Filter Todos by owner
-- Filter Todos by contents of the body
-- Filter Todos by category
-- Ability to add new Todos. This requires:
+- Filter todos by status
+- Filter todos by owner
+- Filter todos by contents of the body
+- Filter todos by category
+- Ability to add new todos. This requires:
   - An Angular form/page that allows the user to enter the information for a new todo with reasonable controls and validation.
-  - A new endpoint on the server that allows clients to add new Todos.
-  - Logic in the server to add that new Todo to the database and return the new ID.
+  - A new endpoint on the server that allows clients to add new todos.
+  - Logic in the server to add that new todo to the database and return the new ID.
 - Testing of all of the above.
 
 ## Workflow and Continuous Integration
@@ -93,13 +94,13 @@ person you're pairing with.
   merge things into master when a feature is working
   and is tested (with passing tests and decent coverage).
 
-## Writing Todos to the Database
+## Writing todos to the Database
 
-- We have included an example of writing to the database with `addUser` functionality. Add to both the front-end and back-end to make it possible to add ToDos so that they appear both in your list and in the database.
+- We have included an example of writing to the database with `addUser` functionality. Add to both the front-end and back-end to make it possible to add todos so that they appear both in your list and in the database.
 
-## Display Todos
+## Display todos
 
-You should use Angular to display ToDos in attractive, readable, and useful ways that are helpful for understanding the nature of a todo.
+You should use Angular to display todos in attractive, readable, and useful ways that are helpful for understanding the nature of a todo.
 
 - Use the Angular Material Design tools you've learned about to build a nice interface for
   accessing these APIs:
