@@ -164,17 +164,17 @@ When GitHub Classroom makes the initial copies of this repository, the
 of this string:
 
 ```text
-UMM-CSci-3601/3601-iteration-template
+UMM-CSci-3601/3601-lab4-mongo
 ```
 
-This tells those services to include the badges for the `3601-iteration-template` repository in the `UMM-CSci-3601` organization. You need to update both the organization and the repository name so they match the "name" of your repository up
+This tells those services to include the badges for the `3601-lab4-mongo` repository in the `UMM-CSci-3601` organization. You need to update both the organization and the repository name so they match the "name" of your repository up
 at the top of your repository page.
 
 * The organization should be changed to whatever the GitHub
   organization is for this semester's course. This is probably
   something like `UMM-CSci-3601-S21`.
 * The repository is whatever name you've given your repository,
-  like `it-1-stupendous-wombats`.
+  like `lab-4-stupendous-wombats`.
 
 You then need to change all the instances of
 

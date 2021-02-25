@@ -31,19 +31,19 @@
   - [Testing the server](#testing-the-server)
   - [End to end testing](#end-to-end-testing)
   - [GitHub Actions](#github-actions)
-- [Changing the name](#changing-the-name)
-- [Deployment](#deployment)
 - [Resources](#resources)
   - [Angular (client)](#angular-client)
   - [Javalin (server)](#javalin-server)
   - [MongoDB (database)](#mongodb-database)
   - [Cypress (end-to-end testing)](#cypress-end-to-end-testing)
 
-This is your starter code for Iteration 1.
-
-There are a number of pieces in this production template to help you get started. As you work on your project, you should replace some of these pieces with elements of your project and remove whatever you don't need (e.g., markdown files, JSON data files, or any remnants of the labs). We include, for example, the users and todo parts of the
-previous labs. These are almost certainly not relevant to your project
-and should be removed once you've gotten going.
+This is your starter code for Lab 4. The main goal here, as
+described in [LABTASKS](./LABTASKS.md), is to update the server
+code to actually use the MongoDB database instead of using a fixed
+set of users and todos. You'll also add functionality to do things
+like adding new todos; this will require making changes all the
+way through from the Angular client, through the Java(lin) server,
+to the database.
 
 ## Setup
 
@@ -128,12 +128,6 @@ These scripts also drop the database before seeding it so it is clean. You shoul
 :warning: Our example E2E tests also reseed the `dev` database
 whenever you run them to ensure that those tests happen in a predictable
 state, so be prepared for that.
-
-You'll want to create your own seed files and add them to the
-`database/seed/` directory for new types used by your project. There
-are nice tools like
-[next.json-generator.com](https://next.json-generator.com/) that you
-can use to easily generate sophisticated seed data for your project.
 
 ## Running your project
 
@@ -245,25 +239,6 @@ There are three GitHub Actions workflows set up in your repo:
 - [End to End](../../actions/workflows/e2e.yaml) - Cypress tests for end-to-end testing
 
 There are badges above that show the status of these checks on the master branch.
-
-## Changing the name
-
-The project by default has the name "CSCI 3601 Iteration Template". There are a few places you need to change to make this the name you want:
-
-- The title of this README.md
-- [`server/src/main/java/umm3601/Server.java`](server/src/main/java/umm3601/Server.java)
-  - The `appName` variable
-- [`client/src/app/app.component.ts`](client/src/app/app.component.ts)
-  - The `title` variable
-  - Also the associated unit and E2E tests will need to be changed.
-- [`client/src/app/app.component.html`](client/src/app/app.component.html)
-  - The `mat-toolbar` element for the navigation drawer is just "Client" by default.
-- [`client/src/index.html`](client/src/index.html)
-  - The `title` element
-
-## Deployment
-
-Instructions on how to crate a DigitalOcean Droplet and setup your project are in [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Resources
 
