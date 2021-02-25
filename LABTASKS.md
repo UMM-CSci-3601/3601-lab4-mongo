@@ -14,6 +14,10 @@
 
 Definitely ask if you're ever confused about what you need to do for a given task.
 
+:warning: Make sure you fix your badges and enable the
+quality checks as described in
+[CODE_QUALITY_CHECKS](./CODE_QUALITY_CHECKS.md).
+
 ## Exploring the project
 
 The structure of this project should be nearly identical to that of lab #3, and as such there really isn't much excitement in that department.
