@@ -10,12 +10,12 @@ import com.mongodb.client.MongoDatabase;
 
 import io.javalin.Javalin;
 import io.javalin.core.util.RouteOverviewPlugin;
-
+import io.javalin.plugin.json.JavalinJackson;
 import umm3601.user.UserController;
 
 public class Server {
 
-  static String appName = "CSCI 3601 Iteration Template";
+  static String appName = "CSci 3601 Lab 4";
 
   public static void main(String[] args) {
 
@@ -39,6 +39,7 @@ public class Server {
 
     Javalin server = Javalin.create(config -> {
       config.registerPlugin(new RouteOverviewPlugin("/api"));
+      config.jsonMapper(new JavalinJackson());
     });
     /*
      * We want to shut the `mongoClient` down if the server either
@@ -61,10 +62,10 @@ public class Server {
     server.get("/api/users", userController::getUsers);
 
     // Get the specified user
-    server.get("/api/users/:id", userController::getUser);
+    server.get("/api/users/{id}", userController::getUser);
 
     // Delete the specified user
-    server.delete("/api/users/:id", userController::deleteUser);
+    server.delete("/api/users/{id}", userController::deleteUser);
 
     // Add new user with the user info being in the JSON body
     // of the HTTP request
