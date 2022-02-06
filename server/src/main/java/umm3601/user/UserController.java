@@ -9,9 +9,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.ImmutableMap;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
 
@@ -87,7 +87,7 @@ public class UserController {
     List<Bson> filters = new ArrayList<>(); // start with a blank document
 
     if (ctx.queryParamMap().containsKey(AGE_KEY)) {
-        int targetAge = ctx.queryParam(AGE_KEY, Integer.class).get();
+        int targetAge = ctx.queryParamAsClass(AGE_KEY, Integer.class).get();
         filters.add(eq(AGE_KEY, targetAge));
     }
 
@@ -99,8 +99,14 @@ public class UserController {
       filters.add(eq(ROLE_KEY, ctx.queryParam(ROLE_KEY)));
     }
 
-    String sortBy = ctx.queryParam("sortby", "name"); //Sort by sort query param, default is name
-    String sortOrder = ctx.queryParam("sortorder", "asc");
+    String sortBy = ctx.queryParam("sortby"); //Sort by sort query param, default is name
+    if (sortBy == null) {
+      sortBy = "name";
+    }
+    String sortOrder = ctx.queryParam("sortorder");
+    if (sortOrder == null) {
+      sortOrder = "asc";
+    }
 
     ctx.json(userCollection.find(filters.isEmpty() ? new Document() : and(filters))
       .sort(sortOrder.equals("desc") ?  Sorts.descending(sortBy) : Sorts.ascending(sortBy))
@@ -114,11 +120,11 @@ public class UserController {
    */
   public void addNewUser(Context ctx) {
     User newUser = ctx.bodyValidator(User.class)
-      .check(usr -> usr.name != null && usr.name.length() > 0) //Verify that the user has a name that is not blank
-      .check(usr -> usr.email.matches(emailRegex)) // Verify that the provided email is a valid email
-      .check(usr -> usr.age > 0) // Verify that the provided age is > 0
-      .check(usr -> usr.role.matches("^(admin|editor|viewer)$")) // Verify that the role is one of the valid roles
-      .check(usr -> usr.company != null && usr.company.length() > 0) // Verify that the user has a company that is not blank
+      .check(usr -> usr.name != null && usr.name.length() > 0, "User must have a non-empty user name") //Verify that the user has a name that is not blank
+      .check(usr -> usr.email.matches(emailRegex), "User must have a legal email") // Verify that the provided email is a valid email
+      .check(usr -> usr.age > 0, "User's age must be greater than zero") // Verify that the provided age is > 0
+      .check(usr -> usr.role.matches("^(admin|editor|viewer)$"), "User must have a legal user role") // Verify that the role is one of the valid roles
+      .check(usr -> usr.company != null && usr.company.length() > 0, "User must have a non-empty company name") // Verify that the user has a company that is not blank
       .get();
 
     // Generate user avatar (you won't need this part for todos)
@@ -130,7 +136,7 @@ public class UserController {
 
     userCollection.insertOne(newUser);
     ctx.status(201);
-    ctx.json(ImmutableMap.of("id", newUser._id));
+    ctx.json(Map.of("id", newUser._id));
   }
 
   /**
