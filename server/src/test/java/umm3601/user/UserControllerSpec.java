@@ -1,6 +1,8 @@
 package umm3601.user;
 
 import static com.mongodb.client.model.Filters.eq;
+import static io.javalin.plugin.json.JsonMapperKt.JSON_MAPPER_KEY;
+import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,10 +13,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.ImmutableMap;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mongodb.MongoClientSettings;
@@ -31,12 +32,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.javalin.core.JavalinConfig;
+import io.javalin.core.validation.ValidationException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
+import io.javalin.http.HandlerType;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.util.ContextUtil;
-import io.javalin.plugin.json.JavalinJson;
-
+import io.javalin.plugin.json.JavalinJackson;
 
 /**
 * Tests the logic of the UserController
@@ -44,7 +47,7 @@ import io.javalin.plugin.json.JavalinJson;
 * @throws IOException
 */
 public class UserControllerSpec {
-
+  private static final long maxRequestSize = new JavalinConfig().maxRequestSize;
   MockHttpServletRequest mockReq = new MockHttpServletRequest();
   MockHttpServletResponse mockRes = new MockHttpServletResponse();
 
@@ -55,7 +58,7 @@ public class UserControllerSpec {
   static MongoClient mongoClient;
   static MongoDatabase db;
 
-  static ObjectMapper jsonMapper = new ObjectMapper();
+  private static JavalinJackson javalinJackson = new JavalinJackson();
 
   @BeforeAll
   public static void setupAll() {
@@ -70,10 +73,8 @@ public class UserControllerSpec {
     db = mongoClient.getDatabase("test");
   }
 
-
   @BeforeEach
   public void setupEach() throws IOException {
-
     // Reset our mock request and response objects
     mockReq.resetAll();
     mockRes.resetAll();
@@ -125,6 +126,39 @@ public class UserControllerSpec {
     userController = new UserController(db);
   }
 
+  /**
+   * Construct an instance of `ContextUtil`, which is essentially
+   * a mock context in Javalin. See `mockContext(String, Map)` for
+   * more details.
+   */
+  private Context mockContext(String path) {
+    return mockContext(path, Map.of());
+  }
+
+  /**
+   * Construct an instance of `ContextUtil`, which is essentially a mock
+   * context in Javalin. We need to provide a couple of attributes, which is
+   * the fifth argument, which forces us to also provide the (default) value
+   * for the fourth argument. There are two attributes we need to provide:
+   *
+   *   - One is a `JsonMapper` that is used to translate between POJOs and JSON
+   *     objects. This is needed by almost every test.
+   *   - The other is `maxRequestSize`, which is needed for all the ADD requests,
+   *     since `ContextUtil` checks to make sure that the request isn't "too big".
+   *     Those tests fails if you don't provide a value for `maxRequestSize` for
+   *     it to use in those comparisons.
+   */
+  private Context mockContext(String path, Map<String, String> pathParams) {
+    return ContextUtil.init(
+        mockReq, mockRes,
+        path,
+        pathParams,
+        HandlerType.INVALID,
+        Map.ofEntries(
+          entry(JSON_MAPPER_KEY, javalinJackson),
+          entry(ContextUtil.maxRequestSizeKey, maxRequestSize)));
+  }
+
   @AfterAll
   public static void teardown() {
     db.drop();
@@ -133,16 +167,16 @@ public class UserControllerSpec {
 
   @Test
   public void GetAllUsers() throws IOException {
-
     // Create our fake Javalin context
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    String path = "api/users";
+    Context ctx = mockContext(path);
     userController.getUsers(ctx);
-
 
     assertEquals(200, mockRes.getStatus());
 
     String result = ctx.resultString();
-    assertEquals(db.getCollection("users").countDocuments(), JavalinJson.fromJson(result, User[].class).length);
+    assertEquals(db.getCollection("users").countDocuments(),
+       javalinJackson.fromJsonString(result, User[].class).length);
   }
 
   @Test
@@ -152,14 +186,14 @@ public class UserControllerSpec {
     mockReq.setQueryString("age=37");
 
     // Create our fake Javalin context
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
 
     userController.getUsers(ctx);
 
     assertEquals(200, mockRes.getStatus()); // The response status should be 200
 
     String result = ctx.resultString();
-    User[] resultUsers = JavalinJson.fromJson(result, User[].class);
+    User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
 
     assertEquals(2, resultUsers.length); // There should be two users returned
     for (User user : resultUsers) {
@@ -176,11 +210,11 @@ public class UserControllerSpec {
   public void GetUsersWithIllegalAge() {
 
     mockReq.setQueryString("age=abc");
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
 
-    // This should now throw a `BadRequestResponse` exception because
+    // This should now throw a `ValidationException` because
     // our request has an age that can't be parsed to a number.
-    assertThrows(BadRequestResponse.class, () -> {
+    assertThrows(ValidationException.class, () -> {
       userController.getUsers(ctx);
     });
   }
@@ -189,13 +223,13 @@ public class UserControllerSpec {
   public void GetUsersByCompany() throws IOException {
 
     mockReq.setQueryString("company=OHMNET");
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
     userController.getUsers(ctx);
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
 
-    User[] resultUsers = JavalinJson.fromJson(result, User[].class);
+    User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
 
     assertEquals(2, resultUsers.length); // There should be two users returned
     for (User user : resultUsers) {
@@ -207,12 +241,12 @@ public class UserControllerSpec {
   public void GetUsersByRole() throws IOException {
 
     mockReq.setQueryString("role=viewer");
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
     userController.getUsers(ctx);
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
-    for (User user : JavalinJson.fromJson(result, User[].class)) {
+    for (User user : javalinJackson.fromJsonString(result, User[].class)) {
       assertEquals("viewer", user.role);
     }
   }
@@ -221,12 +255,12 @@ public class UserControllerSpec {
   public void GetUsersByCompanyAndAge() throws IOException {
 
     mockReq.setQueryString("company=OHMNET&age=37");
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
     userController.getUsers(ctx);
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
-    User[] resultUsers = JavalinJson.fromJson(result, User[].class);
+    User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
 
     assertEquals(1, resultUsers.length); // There should be one user returned
     for (User user : resultUsers) {
@@ -240,22 +274,21 @@ public class UserControllerSpec {
 
     String testID = samsId.toHexString();
 
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users/:id", ImmutableMap.of("id", testID));
+    Context ctx = mockContext("api/users", Map.of("id", testID));
     userController.getUser(ctx);
 
     assertEquals(200, mockRes.getStatus());
 
     String result = ctx.resultString();
-    User resultUser = JavalinJson.fromJson(result, User.class);
+    User resultUser = javalinJackson.fromJsonString(result, User.class);
 
-    assertEquals(resultUser._id, samsId.toHexString());
-    assertEquals(resultUser.name, "Sam");
+    assertEquals(samsId.toHexString(), resultUser._id);
+    assertEquals("Sam", resultUser.name);
   }
 
   @Test
   public void GetUserWithBadId() throws IOException {
-
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users/:id", ImmutableMap.of("id", "bad"));
+    Context ctx = mockContext("api/users", Map.of("id", "bad"));
 
     assertThrows(BadRequestResponse.class, () -> {
       userController.getUser(ctx);
@@ -264,8 +297,7 @@ public class UserControllerSpec {
 
   @Test
   public void GetUserWithNonexistentId() throws IOException {
-
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users/:id", ImmutableMap.of("id", "58af3a600343927e48e87335"));
+    Context ctx = mockContext("api/users/", Map.of("id", "58af3a600343927e48e87335"));
 
     assertThrows(NotFoundResponse.class, () -> {
       userController.getUser(ctx);
@@ -286,14 +318,14 @@ public class UserControllerSpec {
     mockReq.setBodyContent(testNewUser);
     mockReq.setMethod("POST");
 
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
 
     userController.addNewUser(ctx);
 
     assertEquals(201, mockRes.getStatus());
 
     String result = ctx.resultString();
-    String id = jsonMapper.readValue(result, ObjectNode.class).get("id").asText();
+    String id = javalinJackson.fromJsonString(result, ObjectNode.class).get("id").asText();
     assertNotEquals("", id);
     System.out.println(id);
 
@@ -321,9 +353,9 @@ public class UserControllerSpec {
       + "}";
     mockReq.setBodyContent(testNewUser);
     mockReq.setMethod("POST");
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
 
-    assertThrows(BadRequestResponse.class, () -> {
+    assertThrows(ValidationException.class, () -> {
       userController.addNewUser(ctx);
     });
   }
@@ -339,9 +371,9 @@ public class UserControllerSpec {
       + "}";
     mockReq.setBodyContent(testNewUser);
     mockReq.setMethod("POST");
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
 
-    assertThrows(BadRequestResponse.class, () -> {
+    assertThrows(ValidationException.class, () -> {
       userController.addNewUser(ctx);
     });
   }
@@ -356,9 +388,9 @@ public class UserControllerSpec {
       + "}";
     mockReq.setBodyContent(testNewUser);
     mockReq.setMethod("POST");
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
 
-    assertThrows(BadRequestResponse.class, () -> {
+    assertThrows(ValidationException.class, () -> {
       userController.addNewUser(ctx);
     });
   }
@@ -374,9 +406,9 @@ public class UserControllerSpec {
       + "}";
     mockReq.setBodyContent(testNewUser);
     mockReq.setMethod("POST");
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users");
+    Context ctx = mockContext("api/users");
 
-    assertThrows(BadRequestResponse.class, () -> {
+    assertThrows(ValidationException.class, () -> {
       userController.addNewUser(ctx);
     });
   }
@@ -389,7 +421,7 @@ public class UserControllerSpec {
     // User exists before deletion
     assertEquals(1, db.getCollection("users").countDocuments(eq("_id", new ObjectId(testID))));
 
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/users/:id", ImmutableMap.of("id", testID));
+    Context ctx = mockContext("api/users", Map.of("id", testID));
     userController.deleteUser(ctx);
 
     assertEquals(200, mockRes.getStatus());
