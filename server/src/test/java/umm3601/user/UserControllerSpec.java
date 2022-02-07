@@ -59,7 +59,6 @@ public class UserControllerSpec {
   static MongoClient mongoClient;
   static MongoDatabase db;
 
-  private static ObjectMapper objectMapper = new ObjectMapper();
   private static JavalinJackson javalinJackson = new JavalinJackson();
 
   @BeforeAll
@@ -178,7 +177,7 @@ public class UserControllerSpec {
 
     String result = ctx.resultString();
     assertEquals(db.getCollection("users").countDocuments(),
-       objectMapper.readValue(result, User[].class).length);
+       javalinJackson.fromJsonString(result, User[].class).length);
   }
 
   @Test
@@ -195,7 +194,7 @@ public class UserControllerSpec {
     assertEquals(200, mockRes.getStatus()); // The response status should be 200
 
     String result = ctx.resultString();
-    User[] resultUsers = objectMapper.readValue(result, User[].class);
+    User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
 
     assertEquals(2, resultUsers.length); // There should be two users returned
     for (User user : resultUsers) {
@@ -231,7 +230,7 @@ public class UserControllerSpec {
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
 
-    User[] resultUsers = objectMapper.readValue(result, User[].class);
+    User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
 
     assertEquals(2, resultUsers.length); // There should be two users returned
     for (User user : resultUsers) {
@@ -248,7 +247,7 @@ public class UserControllerSpec {
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
-    for (User user : objectMapper.readValue(result, User[].class)) {
+    for (User user : javalinJackson.fromJsonString(result, User[].class)) {
       assertEquals("viewer", user.role);
     }
   }
@@ -262,7 +261,7 @@ public class UserControllerSpec {
 
     assertEquals(200, mockRes.getStatus());
     String result = ctx.resultString();
-    User[] resultUsers = objectMapper.readValue(result, User[].class);
+    User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
 
     assertEquals(1, resultUsers.length); // There should be one user returned
     for (User user : resultUsers) {
@@ -282,7 +281,7 @@ public class UserControllerSpec {
     assertEquals(200, mockRes.getStatus());
 
     String result = ctx.resultString();
-    User resultUser = objectMapper.readValue(result, User.class);
+    User resultUser = javalinJackson.fromJsonString(result, User.class);
 
     assertEquals(samsId.toHexString(), resultUser._id);
     assertEquals("Sam", resultUser.name);
@@ -327,7 +326,7 @@ public class UserControllerSpec {
     assertEquals(201, mockRes.getStatus());
 
     String result = ctx.resultString();
-    String id = objectMapper.readValue(result, ObjectNode.class).get("id").asText();
+    String id = javalinJackson.fromJsonString(result, ObjectNode.class).get("id").asText();
     assertNotEquals("", id);
     System.out.println(id);
 
