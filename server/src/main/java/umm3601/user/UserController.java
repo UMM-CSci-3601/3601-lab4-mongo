@@ -29,9 +29,9 @@ import io.javalin.http.NotFoundResponse;
  */
 public class UserController {
 
-  private static final String AGE_KEY = "age";
-  private static final String COMPANY_KEY = "company";
-  private static final String ROLE_KEY = "role";
+  public static final String AGE_KEY = "age";
+  public static final String COMPANY_KEY = "company";
+  public static final String ROLE_KEY = "role";
 
   static String emailRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 
@@ -108,6 +108,7 @@ public class UserController {
       sortOrder = "asc";
     }
 
+    ctx.status(200);
     ctx.json(userCollection.find(filters.isEmpty() ? new Document() : and(filters))
       .sort(sortOrder.equals("desc") ?  Sorts.descending(sortBy) : Sorts.ascending(sortBy))
       .into(new ArrayList<>()));

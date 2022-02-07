@@ -7,6 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -31,9 +37,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatcher;
 
 import io.javalin.core.JavalinConfig;
 import io.javalin.core.validation.ValidationException;
+import io.javalin.core.validation.Validator;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HandlerType;
@@ -201,6 +209,38 @@ public class UserControllerSpec {
     for (User user : resultUsers) {
       assertEquals(37, user.age); // Every user should be age 37
     }
+  }
+
+  @Test
+  public void getUsersByAge() throws JsonMappingException, JsonProcessingException {
+    Context ctx = mock(Context.class);
+    // When the controller calls `ctx.queryParamMap`, return the expected map for an
+    // "?age=37" query.
+    when(ctx.queryParamMap()).thenReturn(Map.of(UserController.AGE_KEY, List.of("37")));
+    // When the controller calls `ctx.queryParamAsClass() to get the value associated with
+    // the "age" key, return an appropriate Validator. TBH, I never did figure out what the
+    // third argument to the Validator constructor was for, but `null` seems OK. I'm also not sure
+    // what the first argument is; it appears that you can set it to anything that isn't
+    // null and it's happy.
+    Validator<Integer> validator = new Validator<Integer>("age", 37, null);
+    when(ctx.queryParamAsClass(UserController.AGE_KEY, Integer.class)).thenReturn(validator);
+
+    // Call the method under test.
+    userController.getUsers(ctx);
+
+    // Verify that `getUsers` called `ctx.status(200)` at some point.
+    verify(ctx).status(200);
+
+    // Verify that `ctx.json()` is called with a `List` of `User`s.
+    // Each of those `User`s should have age 37.
+    verify(ctx).json(argThat(new ArgumentMatcher<List<User>>() {
+      public boolean matches(List<User> users) {
+        for (User user : users) {
+          assertEquals(37, user.age);
+        }
+        return true;
+      }
+    }));
   }
 
   /**
