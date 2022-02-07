@@ -137,7 +137,7 @@ public class UserControllerSpec {
 
   /**
    * Construct an instance of `ContextUtil`, which is essentially
-   * a mock context in Javalin. See `mockContext(String, Map) for
+   * a mock context in Javalin. See `mockContext(String, Map)` for
    * more details.
    */
   private Context mockContext(String path) {
