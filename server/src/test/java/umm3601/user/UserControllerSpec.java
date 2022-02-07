@@ -40,7 +40,7 @@ import io.javalin.http.HandlerType;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.util.ContextUtil;
 import io.javalin.plugin.json.JavalinJackson;
-import io.javalin.plugin.json.JsonMapperKt;
+import static io.javalin.plugin.json.JsonMapperKt.JSON_MAPPER_KEY;
 
 /**
 * Tests the logic of the UserController
@@ -157,7 +157,7 @@ public class UserControllerSpec {
         pathParams,
         HandlerType.INVALID,
         Map.ofEntries(
-          entry(JsonMapperKt.JSON_MAPPER_KEY, javalinJackson),
+          entry(JSON_MAPPER_KEY, javalinJackson),
           entry(ContextUtil.maxRequestSizeKey, maxRequestSize)));
   }
 
