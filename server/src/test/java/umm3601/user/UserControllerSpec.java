@@ -1,6 +1,7 @@
 package umm3601.user;
 
 import static com.mongodb.client.model.Filters.eq;
+import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import static java.util.Map.entry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.javalin.core.JavalinConfig;
 import io.javalin.core.validation.ValidationException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
@@ -39,6 +40,7 @@ import io.javalin.http.HandlerType;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.util.ContextUtil;
 import io.javalin.plugin.json.JavalinJackson;
+import io.javalin.plugin.json.JsonMapperKt;
 
 /**
 * Tests the logic of the UserController
@@ -46,17 +48,7 @@ import io.javalin.plugin.json.JavalinJackson;
 * @throws IOException
 */
 public class UserControllerSpec {
-
-  /*
-   * We need this because `ContextUtil` (essentially mock contexts) uses
-   * an internal `maxRequestSize` attribute that we have to set when we
-   * initialize a mock context. If we don't, you get an obscure
-   * `NullPointerException` when it tries to read its `maxRequestSize`
-   * attribute. The value provided here is the default that Javalin
-   * uses, at least in February 2022.
-   * (https://github.com/tipsy/javalin/blob/00152f1f78862e57bb296f34fee694a7cf47b453/javalin/src/main/java/io/javalin/core/JavalinConfig.java#L65)
-   */
-  private static final long maxRequestSize = 1_000_000L;
+  private static final long maxRequestSize = new JavalinConfig().maxRequestSize;
   MockHttpServletRequest mockReq = new MockHttpServletRequest();
   MockHttpServletResponse mockRes = new MockHttpServletResponse();
 
@@ -67,7 +59,8 @@ public class UserControllerSpec {
   static MongoClient mongoClient;
   static MongoDatabase db;
 
-  static ObjectMapper objectMapper = new ObjectMapper();
+  private static ObjectMapper objectMapper = new ObjectMapper();
+  private static JavalinJackson javalinJackson = new JavalinJackson();
 
   @BeforeAll
   public static void setupAll() {
@@ -164,7 +157,7 @@ public class UserControllerSpec {
         pathParams,
         HandlerType.INVALID,
         Map.ofEntries(
-          entry(io.javalin.plugin.json.JsonMapperKt.JSON_MAPPER_KEY, new JavalinJackson()),
+          entry(JsonMapperKt.JSON_MAPPER_KEY, javalinJackson),
           entry(ContextUtil.maxRequestSizeKey, maxRequestSize)));
   }
 
