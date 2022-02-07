@@ -1,6 +1,7 @@
 package umm3601.user;
 
 import static com.mongodb.client.model.Filters.eq;
+import static io.javalin.plugin.json.JsonMapperKt.JSON_MAPPER_KEY;
 import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -14,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
@@ -40,7 +40,6 @@ import io.javalin.http.HandlerType;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.util.ContextUtil;
 import io.javalin.plugin.json.JavalinJackson;
-import static io.javalin.plugin.json.JsonMapperKt.JSON_MAPPER_KEY;
 
 /**
 * Tests the logic of the UserController
