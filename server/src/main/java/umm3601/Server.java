@@ -10,7 +10,6 @@ import com.mongodb.client.MongoDatabase;
 
 import io.javalin.Javalin;
 import io.javalin.core.util.RouteOverviewPlugin;
-import io.javalin.plugin.json.JavalinJackson;
 import umm3601.user.UserController;
 
 public class Server {
