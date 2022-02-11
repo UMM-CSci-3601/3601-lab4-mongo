@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.mongodb.client.MongoDatabase;
@@ -99,14 +100,8 @@ public class UserController {
       filters.add(eq(ROLE_KEY, ctx.queryParam(ROLE_KEY)));
     }
 
-    String sortBy = ctx.queryParam("sortby"); //Sort by sort query param, default is name
-    if (sortBy == null) {
-      sortBy = "name";
-    }
-    String sortOrder = ctx.queryParam("sortorder");
-    if (sortOrder == null) {
-      sortOrder = "asc";
-    }
+    String sortBy = Objects.requireNonNullElse(ctx.queryParam("sortby"), "name"); //Sort by sort query param, default is name
+    String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortorder"), "asc");
 
     ctx.status(200);
     ctx.json(userCollection.find(filters.isEmpty() ? new Document() : and(filters))

@@ -10,12 +10,10 @@ import com.mongodb.client.MongoDatabase;
 
 import io.javalin.Javalin;
 import io.javalin.core.util.RouteOverviewPlugin;
-import io.javalin.plugin.json.JavalinJackson;
 import umm3601.user.UserController;
 
 public class Server {
 
-  static String appName = "CSci 3601 Lab 4";
 
   public static void main(String[] args) {
 
@@ -39,7 +37,6 @@ public class Server {
 
     Javalin server = Javalin.create(config -> {
       config.registerPlugin(new RouteOverviewPlugin("/api"));
-      config.jsonMapper(new JavalinJackson());
     });
     /*
      * We want to shut the `mongoClient` down if the server either
