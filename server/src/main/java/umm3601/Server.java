@@ -10,10 +10,10 @@ import com.mongodb.client.MongoDatabase;
 
 import io.javalin.Javalin;
 import io.javalin.core.util.RouteOverviewPlugin;
+import io.javalin.http.InternalServerErrorResponse;
 import umm3601.user.UserController;
 
 public class Server {
-
 
   public static void main(String[] args) {
 
@@ -68,9 +68,17 @@ public class Server {
     // of the HTTP request
     server.post("/api/users", userController::addNewUser);
 
+    // This catches any uncaught exceptions thrown in the server
+    // code and turns them into a 500 response ("Internal Server
+    // Error Response"). In general you'll like to *never* actually
+    // return this, as it's an instance of the server crashing in
+    // some way, and returning a 500 to your user is *super*
+    // unhelpful to them. In a production system you'd almost
+    // certainly want to use a logging library to log all errors
+    // caught here so you'd know about them and could try to address
+    // them.
     server.exception(Exception.class, (e, ctx) -> {
-      ctx.status(500);
-      ctx.json(e); // you probably want to remove this in production
+      throw new InternalServerErrorResponse(e.toString());
     });
   }
 }
