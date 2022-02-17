@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User, UserRole } from './user';
 import { UserService } from './user.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-list-component',
@@ -21,7 +22,8 @@ export class UserListComponent implements OnInit, OnDestroy  {
   public userCompany: string;
   public viewType: 'card' | 'list' = 'card';
   getUsersSub: Subscription;
-
+  ageSubject = new Subject<number>();
+  age: number;
 
   // Inject the UserService into this component.
   // That's what happens in the following constructor.
@@ -30,11 +32,18 @@ export class UserListComponent implements OnInit, OnDestroy  {
   // with the server.
 
   constructor(private userService: UserService) {
-
+    this.ageSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged())
+      .subscribe(age => {
+        this.userAge = age;
+        this.getUsersFromServer();
+      });
   }
 
   getUsersFromServer(): void {
-    this.unsub();
+    console.log('Calling getUsersFromServer()');
+    // this.unsub();
     this.getUsersSub = this.userService.getUsers({
       role: this.userRole,
       age: this.userAge

@@ -29,7 +29,10 @@
           <mat-form-field class="input-field">
             <mat-label>Age</mat-label>
             <input matInput data-test="userAgeInput" type="number" placeholder="Filter by age"
-            min="0" max="200" [(ngModel)]="userAge" (input)="getUsersFromServer()">
+            min="0" max="200"
+            [ngModel]="userAge"
+            (ngModelChange)="this.ageSubject.next($event)"
+            >
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
 

@@ -100,6 +100,8 @@ public class UserController {
       filters.add(eq(ROLE_KEY, ctx.queryParam(ROLE_KEY)));
     }
 
+    System.out.println("About to filter with " + filters);
+
     String sortBy = Objects.requireNonNullElse(ctx.queryParam("sortby"), "name"); //Sort by sort query param, default is name
     String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortorder"), "asc");
 
