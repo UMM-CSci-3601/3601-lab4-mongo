@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -39,42 +39,65 @@ const COMMON_IMPORTS: any[] = [
   RouterTestingModule,
 ];
 
-describe('User list', () => {
+// The `UserListComponent` being tested
+let userList: UserListComponent;
 
-  let userList: UserListComponent;
-  let fixture: ComponentFixture<UserListComponent>;
+// This constructs the `userList` (declared
+// above) that will be used throughout the tests.
+// This is called in a `beforeEach()` in each of the
+// `describe()` sections below.
+async function constructUserList() {
+  // Compile all the components in the test bed
+  // so that everything's ready to go.
+  await TestBed.compileComponents();
+  // Create a fixture of the UserListComponent. That
+  // allows us to get an instance of the component
+  // (userList, below) that we can control in
+  // the tests.
+  const fixture = TestBed.createComponent(UserListComponent);
+  userList = fixture.componentInstance;
+  // Tells Angular to sync the data bindings between
+  // the model and the DOM. This ensures, e.g., that the
+  // `userList` component actually requests the list
+  // of users from the `MockUserService` so that it's
+  // up to date before we start running tests on it.
+  fixture.detectChanges();
+}
 
+describe('UserListComponent', () => {
+  // Set up the `TestBed` so that it uses
+  // a `MockUserService` in place of the real `UserService`
+  // for the purposes of the testing. We also have to include
+  // the relevant imports and declarations so that the tests
+  // can find all the necessary parts.
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [COMMON_IMPORTS],
       declarations: [UserListComponent, UserCardComponent],
       // providers:    [ UserService ]  // NO! Don't provide the real service!
       // Provide a test-double instead
+      // This MockerUserService is defined in client/testing/user.service.mock.
       providers: [{ provide: UserService, useValue: new MockUserService() }]
     });
   });
 
-  beforeEach(waitForAsync(() => {
-    TestBed.compileComponents().then(() => {
-      fixture = TestBed.createComponent(UserListComponent);
-      userList = fixture.componentInstance;
-      fixture.detectChanges();
-    });
-  }));
+  // Construct the `userList` used for the testing in the `it` statements
+  // below.
+  beforeEach(waitForAsync(constructUserList));
 
   it('contains all the users', () => {
     expect(userList.serverFilteredUsers.length).toBe(3);
   });
 
-  it('contains a user named \'Chris\'', () => {
+  it('contains a user named "Chris"', () => {
     expect(userList.serverFilteredUsers.some((user: User) => user.name === 'Chris')).toBe(true);
   });
 
-  it('contain a user named \'Jamie\'', () => {
+  it('contain a user named "Jamie"', () => {
     expect(userList.serverFilteredUsers.some((user: User) => user.name === 'Jamie')).toBe(true);
   });
 
-  it('doesn\'t contain a user named \'Santa\'', () => {
+  it('doesn\'t contain a user named "Santa"', () => {
     expect(userList.serverFilteredUsers.some((user: User) => user.name === 'Santa')).toBe(false);
   });
 
@@ -83,10 +106,17 @@ describe('User list', () => {
   });
 });
 
+/*
+ * This test is a little odd, but illustrates how we can use stubs
+ * to create mock objects (a service in this case) that be used for
+ * testing. Here we set up the mock UserService (userServiceStub) so that
+ * _always_ fails (throws an exception) when you request a set of users.
+ *
+ * So this doesn't really test anything meaningful in the context of our
+ * code (I certainly wouldn't copy it), but it does illustrate some nice
+ * testing tools. Hopefully it's useful as an example in that regard.
+ */
 describe('Misbehaving User List', () => {
-  let userList: UserListComponent;
-  let fixture: ComponentFixture<UserListComponent>;
-
   let userServiceStub: {
     getUsers: () => Observable<User[]>;
     getUsersFiltered: () => Observable<User[]>;
@@ -96,10 +126,10 @@ describe('Misbehaving User List', () => {
     // stub UserService for test purposes
     userServiceStub = {
       getUsers: () => new Observable(observer => {
-        observer.error('Error-prone observable');
+        observer.error('getUsers() Observer generates an error');
       }),
       getUsersFiltered: () => new Observable(observer => {
-        observer.error('Error-prone observable');
+        observer.error('getUsersFiltered() Observer generates an error');
       })
     };
 
@@ -112,16 +142,15 @@ describe('Misbehaving User List', () => {
     });
   });
 
-  beforeEach(waitForAsync(() => {
-    TestBed.compileComponents().then(() => {
-      fixture = TestBed.createComponent(UserListComponent);
-      userList = fixture.componentInstance;
-      fixture.detectChanges();
-    });
-  }));
+  // Construct the `userList` used for the testing in the `it` statement
+  // below.
+  beforeEach(waitForAsync(constructUserList));
 
-  it('generates an error if we don\'t set up a UserListService', () => {
-    // Since the observer throws an error, we don't expect users to be defined.
+  it('fails to load users if we do not set up a UserListService', () => {
+    // Since calling both getUsers() and getUsersFiltered() return
+    // Observables that then throw exceptions, we don't expect the component
+    // to be able to get a list of users, and serverFilteredUsers should
+    // be undefined.
     expect(userList.serverFilteredUsers).toBeUndefined();
   });
 });
