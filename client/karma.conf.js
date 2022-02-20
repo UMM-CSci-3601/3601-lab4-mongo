@@ -31,9 +31,7 @@ module.exports = function (config) {
           branches: 80,
           functions: 80
         }
-      },
-      reports: ['html', 'lcovonly', 'text-summary'],
-      fixWebpackSourcePaths: true
+      }
     },
     reporters: ['progress', 'kjhtml'],
     port: 9876,
