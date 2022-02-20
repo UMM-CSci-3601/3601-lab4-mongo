@@ -8,11 +8,13 @@
       "html"
     ],
     "cSpell.words": [
-        "Bson",
-        "CSCI",
-        "Javalin",
-        "sidenav",
-        "todos"
+      "Bson",
+      "compat",
+      "CSCI",
+      "Javalin",
+      "sidenav",
+      "todos",
+      "unsub"
     ],
     "angular.enable-experimental-ivy-prompt": false,
 }
