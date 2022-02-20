@@ -66,7 +66,7 @@
 
       <!-- Card grid view -->
       <div *ngSwitchCase="'card'" fxLayout="row wrap" fxLayoutGap="10px" class="user-cards-container">
-        <app-user-card simple="true" *ngFor="let user of filteredUsers" class="user-card" [user]="user" fxFlex="1 1 280px"></app-user-card>
+        <app-user-card [simple]="true" *ngFor="let user of filteredUsers" class="user-card" [user]="user" fxFlex="1 1 280px"></app-user-card>
       </div>
 
       <!-- List view -->
@@ -75,7 +75,7 @@
           <mat-nav-list class="user-nav-list">
             <h3 mat-subheader>Users</h3>
             <a mat-list-item *ngFor="let user of this.filteredUsers" [routerLink]="['/users', user._id]" class="user-list-item">
-              <img matListAvatar [src]="user.avatar" *ngIf="this.user.avatar">
+              <img matListAvatar [src]="user.avatar" alt="Avatar for user {{user.name}}" *ngIf="this.user.avatar">
               <h3 matLine class="user-list-name"> {{user.name}} </h3>
               <p matLine class="user-list-role"> {{user.role}} </p>
             </a>

@@ -13,6 +13,7 @@ describe('User list', () => {
   });
 
   it('Should show 10 users in both card and list view', () => {
+    page.changeView('card');
     page.getUserCards().should('have.length', 10);
     page.changeView('list');
     page.getUserListItems().should('have.length', 10);
