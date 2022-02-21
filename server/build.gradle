@@ -5,6 +5,9 @@ plugins {
   // Apply the application plugin to add support for building a CLI application
   id 'application'
 
+  // Apply the checkstyle plugin to check for appropriate Java code style.
+  id 'checkstyle'
+
   // Apply the Jacoco plugin to add suppport for JUnit test coverage reports.
   id 'jacoco'
 }
