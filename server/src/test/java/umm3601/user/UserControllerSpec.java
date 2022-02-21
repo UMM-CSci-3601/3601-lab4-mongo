@@ -389,10 +389,99 @@ public class UserControllerSpec {
   }
 
   @Test
+  public void respondsAppropriateToAddingUserWithAgeOfZero() throws IOException {
+    String testNewUser = "{"
+      + "\"name\": \"Test User\","
+      + "\"age\": \"0\","
+      + "\"company\": \"testers\","
+      + "\"email\": \"test@example.com\","
+      + "\"role\": \"viewer\""
+      + "}";
+    mockReq.setBodyContent(testNewUser);
+    mockReq.setMethod("POST");
+    Context ctx = mockContext("api/users");
+
+    assertThrows(ValidationException.class, () -> {
+      userController.addNewUser(ctx);
+    });
+  }
+
+  @Test
+  public void respondsAppropriateToAddingUserWithNegativeAge() throws IOException {
+    String testNewUser = "{"
+      + "\"name\": \"Test User\","
+      + "\"age\": \"-1\","
+      + "\"company\": \"testers\","
+      + "\"email\": \"test@example.com\","
+      + "\"role\": \"viewer\""
+      + "}";
+    mockReq.setBodyContent(testNewUser);
+    mockReq.setMethod("POST");
+    Context ctx = mockContext("api/users");
+
+    assertThrows(ValidationException.class, () -> {
+      userController.addNewUser(ctx);
+    });
+  }
+
+  @Test
   public void respondsAppropriateToAddingUserWithMissingName() throws IOException {
     String testNewUser = "{"
       + "\"age\": 25,"
       + "\"company\": \"testers\","
+      + "\"email\": \"test@example.com\","
+      + "\"role\": \"viewer\""
+      + "}";
+    mockReq.setBodyContent(testNewUser);
+    mockReq.setMethod("POST");
+    Context ctx = mockContext("api/users");
+
+    assertThrows(ValidationException.class, () -> {
+      userController.addNewUser(ctx);
+    });
+  }
+
+  @Test
+  public void respondsAppropriateToAddingUserWithEmptyName() throws IOException {
+    String testNewUser = "{"
+      + "\"name\": \"\","
+      + "\"age\": 25,"
+      + "\"company\": \"testers\","
+      + "\"email\": \"test@example.com\","
+      + "\"role\": \"viewer\""
+      + "}";
+    mockReq.setBodyContent(testNewUser);
+    mockReq.setMethod("POST");
+    Context ctx = mockContext("api/users");
+
+    assertThrows(ValidationException.class, () -> {
+      userController.addNewUser(ctx);
+    });
+  }
+
+  @Test
+  public void respondsAppropriateToAddingUserWithMissingCompany() throws IOException {
+    String testNewUser = "{"
+      + "\"age\": 25,"
+      + "\"name\": \"Test User\","
+      + "\"email\": \"test@example.com\","
+      + "\"role\": \"viewer\""
+      + "}";
+    mockReq.setBodyContent(testNewUser);
+    mockReq.setMethod("POST");
+    Context ctx = mockContext("api/users");
+
+    assertThrows(ValidationException.class, () -> {
+      userController.addNewUser(ctx);
+    });
+  }
+
+  @Test
+  public void respondsAppropriateToAddingUserWithEmptyCompany() throws IOException {
+    String testNewUser = "{"
+      + "\"name\": \"Test User\","
+      + "\"age\": 25,"
+      + "\"company\": \"\","
       + "\"email\": \"test@example.com\","
       + "\"role\": \"viewer\""
       + "}";
