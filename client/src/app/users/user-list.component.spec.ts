@@ -113,10 +113,6 @@ describe('UserListComponent', () => {
  * to create mock objects (a service in this case) that be used for
  * testing. Here we set up the mock UserService (userServiceStub) so that
  * _always_ fails (throws an exception) when you request a set of users.
- *
- * So this doesn't really test anything meaningful in the context of our
- * code (I certainly wouldn't copy it), but it does illustrate some nice
- * testing tools. Hopefully it's useful as an example in that regard.
  */
 describe('Misbehaving User List', () => {
   let userServiceStub: {
