@@ -45,6 +45,12 @@
               "_id"
             ]
           }
+        ],
+        "prefer-arrow/prefer-arrow-functions": [
+          "error",
+          {
+            "allowStandaloneDeclarations": true
+          }
         ]
       }
     },

@@ -2,7 +2,6 @@ import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { AppModule } from './app.module';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
@@ -33,9 +32,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'CSCI 3601 Iteration Template'`, () => {
+  it(`should have as title 'CSci 3601 Lab 4'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('CSCI 3601 Iteration Template');
+    expect(app.title).toEqual('CSci 3601 Lab 4');
   });
 });
