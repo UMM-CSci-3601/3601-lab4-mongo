@@ -14,7 +14,7 @@
 
 There are numerous tools designed to monitor the "quality" (defined
 in various ways) of your code and provide feedback on weak spots and
-opportunities for improvement. We have a few of these configured to work
+opportunities for improvement. We have several of these configured to work
 with your project repository, providing you with feedback in two forms:
 
 - Badges (at the top of [README.md](README.md))
@@ -56,13 +56,13 @@ actually aware of.
 
 Code analysis tools can help make sure that at least a variety of
 automatic checks happen on each pull request (PR). Then if a PR would
-introduce a problem or in some other way "lower" the quality of the
+introduce a problem or in some other way lower the quality of the
 code, everyone would know it and have a chance to address it before
 that PR is merged in.
 
 Badges also provide a nice visual indication of the health of the code
 base. This can be useful for getting a quick sense of the state of the
-project, as well as "advertising" that you care about quality and are
+project, as well as advertising that you care about quality and are
 making an effort to maintain the quality of your codebase.
 
 There are quite a few code analysis tools out there; we're using two
@@ -71,14 +71,10 @@ are pretty "user friendly": [Better Code Hub](https://bettercodehub.com/) and [L
 claims that these are the "best", however, and feel free to
 explore others, sharing cool things that you discover.
 
-Some other services:
-
-- [CodeScene](https://codescene.io/) provides quite sophisticated analyses of your codebase,
-  but it's not trivial to make sense of the huge amount of information
-  that it provides.
-- [Codacy](https://www.codacy.com/) is cool in that it understands a _lot_ of languages
-  and notations, but it's defaults can be quite "noisy" and it's not
-  trivial to reconfigure.
+As an example of another service, [CodeScene](https://codescene.io/)
+provides quite sophisticated analyses of your codebase, but it's not
+trivial to make sense of the huge amount of information
+that it provides.
 
 ### Better Code Hub
 
@@ -86,7 +82,7 @@ Some other services:
 checking 10 particular properties. Many of these are different versions
 of "keep things simple", although there are also architecture-level
 checks. They have a check on testing that doesn't make any particular
-sense to me; you should probably rely on your test coverages instead
+sense to us; you should probably rely on your test coverages instead
 of their "Automate Tests" check.
 
 If you fail one of their checks, you can open up that check on their web
@@ -172,7 +168,7 @@ at the top of your repository page.
 
 - The organization should be changed to whatever the GitHub
   organization is for this semester's course. This is probably
-  something like `UMM-CSci-3601-S21`.
+  something like `UMM-CSci-3601-S22`.
 - The repository is whatever name you've given your repository,
   like `lab-4-stupendous-wombats`.
 
@@ -185,7 +181,7 @@ UMM-CSci-3601/3601-iteration-template
 so they match the name of your repository, e.g.,
 
 ```text
-UMM-CSci-3601-S21/it-1-stupendous-wombats
+UMM-CSci-3601-S22/it-1-stupendous-wombats
 ```
 
 Once all those are updated, then the badges should point to the
