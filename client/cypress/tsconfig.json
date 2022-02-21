@@ -6,7 +6,7 @@
       "cypress",
       "node"
     ],
-    "noEmit": true
+    "sourceMap": false
   },
   "include": [
     "**/*.ts"
