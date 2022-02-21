@@ -15,6 +15,8 @@ import umm3601.user.UserController;
 
 public class Server {
 
+  private static final int PORT_NUMBER = 4567;
+
   public static void main(String[] args) {
 
     // Get the MongoDB address and database name from environment variables and
@@ -49,11 +51,9 @@ public class Server {
       event.serverStartFailed(mongoClient::close);
       event.serverStopped(mongoClient::close);
     });
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      server.stop();
-    }));
+    Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
 
-    server.start(4567);
+    server.start(PORT_NUMBER);
 
     // List users, filtered using query parameters
     server.get("/api/users", userController::getUsers);

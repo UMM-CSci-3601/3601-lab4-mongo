@@ -23,6 +23,7 @@ import org.mongojack.JacksonMongoCollection;
 
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
+import io.javalin.http.HttpCode;
 import io.javalin.http.NotFoundResponse;
 
 /**
@@ -34,7 +35,7 @@ public class UserController {
   private static final String COMPANY_KEY = "company";
   private static final String ROLE_KEY = "role";
 
-  static String emailRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+  public static final String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 
   private final JacksonMongoCollection<User> userCollection;
 
@@ -58,7 +59,7 @@ public class UserController {
 
     try {
       user = userCollection.find(eq("_id", new ObjectId(id))).first();
-    } catch(IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
       throw new BadRequestResponse("The requested user id wasn't a legal Mongo Object ID.");
     }
     if (user == null) {
@@ -100,7 +101,10 @@ public class UserController {
       filters.add(eq(ROLE_KEY, ctx.queryParam(ROLE_KEY)));
     }
 
-    String sortBy = Objects.requireNonNullElse(ctx.queryParam("sortby"), "name"); //Sort by sort query param, default is name
+    // Sort the results. Use the `sortby` query param (default "name")
+    // as the field to sort by, and the query param `sortorder` (default
+    // "asc") to specify the sort order.
+    String sortBy = Objects.requireNonNullElse(ctx.queryParam("sortby"), "name");
     String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortorder"), "asc");
 
     ctx.json(userCollection.find(filters.isEmpty() ? new Document() : and(filters))
@@ -115,22 +119,29 @@ public class UserController {
    */
   public void addNewUser(Context ctx) {
     User newUser = ctx.bodyValidator(User.class)
-      .check(usr -> usr.name != null && usr.name.length() > 0, "User must have a non-empty user name") //Verify that the user has a name that is not blank
-      .check(usr -> usr.email.matches(emailRegex), "User must have a legal email") // Verify that the provided email is a valid email
-      .check(usr -> usr.age > 0, "User's age must be greater than zero") // Verify that the provided age is > 0
-      .check(usr -> usr.role.matches("^(admin|editor|viewer)$"), "User must have a legal user role") // Verify that the role is one of the valid roles
-      .check(usr -> usr.company != null && usr.company.length() > 0, "User must have a non-empty company name") // Verify that the user has a company that is not blank
+       // Verify that the user has a name that is not blank
+      .check(usr -> usr.name != null && usr.name.length() > 0, "User must have a non-empty user name")
+       // Verify that the provided email is a valid email
+      .check(usr -> usr.email.matches(EMAIL_REGEX), "User must have a legal email")
+       // Verify that the provided age is > 0
+      .check(usr -> usr.age > 0, "User's age must be greater than zero")
+       // Verify that the role is one of the valid roles
+      .check(usr -> usr.role.matches("^(admin|editor|viewer)$"), "User must have a legal user role")
+       // Verify that the user has a company that is not blank
+      .check(usr -> usr.company != null && usr.company.length() > 0, "User must have a non-empty company name")
       .get();
 
     // Generate user avatar (you won't need this part for todos)
     try {
-      newUser.avatar = "https://gravatar.com/avatar/" + md5(newUser.email) + "?d=identicon";  // generate unique md5 code for identicon
+      // generate unique md5 code for identicon
+      newUser.avatar = "https://gravatar.com/avatar/" + md5(newUser.email) + "?d=identicon";
     } catch (NoSuchAlgorithmException ignored) {
-      newUser.avatar = "https://gravatar.com/avatar/?d=mp";                           // set to mystery person
+      // set to mystery person if we can't use the md5() algorithm
+      newUser.avatar = "https://gravatar.com/avatar/?d=mp";
     }
 
     userCollection.insertOne(newUser);
-    ctx.status(201);
+    ctx.status(HttpCode.OK);
     ctx.json(Map.of("id", newUser._id));
   }
 
