@@ -119,7 +119,7 @@ public class UserController {
    */
   public void addNewUser(Context ctx) {
     User newUser = ctx.bodyValidator(User.class)
-       //Verify that the user has a name that is not blank
+       // Verify that the user has a name that is not blank
       .check(usr -> usr.name != null && usr.name.length() > 0, "User must have a non-empty user name")
        // Verify that the provided email is a valid email
       .check(usr -> usr.email.matches(EMAIL_REGEX), "User must have a legal email")
