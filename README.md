@@ -1,3 +1,5 @@
+# CSCI 3601 Lab 4 - MongoDB <!-- omit in toc -->
+
 !["Broken" badge to remind us to fix the URLs on the "real" badges](https://img.shields.io/badge/FIX_BADGES-Badges_below_need_to_be_updated-red)
 
 > **Make sure you update the links for the badges below so they point
@@ -8,8 +10,6 @@
 >
 > Feel free to remove the badge above and this text when you've
 > dealt with that.
-
-# CSCI 3601 Lab 4 - MongoDB <!-- omit in toc -->
 
 [![Server Build Status](../../actions/workflows/server.yml/badge.svg)](../../actions/workflows/server.yml)
 [![Client Build Status](../../actions/workflows/client.yaml/badge.svg)](../../actions/workflows/client.yaml)
@@ -162,7 +162,6 @@ You can leave all the default settings and click the green "Connect" button to a
 
 ![image](https://user-images.githubusercontent.com/1300395/109006728-fabc6f00-7670-11eb-9f15-55a39f7b9674.png)
 
-
 You will then have the MongoDB server in the sidebar.
 
 </details>
@@ -239,12 +238,12 @@ There are badges above that show the status of these checks on the master branch
 
 ### Angular (client)
 
-* [Angular Unit Testing (Karma)](https://angular.io/guide/testing)
-* [Angular Routing](https://angular.io/guide/router)
-* [Angular Forms](https://angular.io/guide/forms-overview)
-* [Angular Material](https://material.angular.io/)
-* [What are environments in Angular](https://angular.io/guide/build#configuring-application-environments)
-* [Angular CLI](https://angular.io/cli)
+- [Angular Unit Testing (Karma)](https://angular.io/guide/testing)
+- [Angular Routing](https://angular.io/guide/router)
+- [Angular Forms](https://angular.io/guide/forms-overview)
+- [Angular Material](https://material.angular.io/)
+- [What are environments in Angular](https://angular.io/guide/build#configuring-application-environments)
+- [Angular CLI](https://angular.io/cli)
 
 ### Javalin (server)
 
@@ -264,7 +263,7 @@ There are badges above that show the status of these checks on the master branch
 
 ### Cypress (end-to-end testing)
 
-* [Cypress Docs](https://docs.cypress.io/)
-* [Cypress Best Practices](https://docs.cypress.io/guides/references/best-practices.html)
-* [Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress.html#Cypress-Can-Be-Simple-Sometimes)
-* [Interacting with Elements in Cypress](https://docs.cypress.io/guides/core-concepts/interacting-with-elements.html#Actionability)
+- [Cypress Docs](https://docs.cypress.io/)
+- [Cypress Best Practices](https://docs.cypress.io/guides/references/best-practices.html)
+- [Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress.html#Cypress-Can-Be-Simple-Sometimes)
+- [Interacting with Elements in Cypress](https://docs.cypress.io/guides/core-concepts/interacting-with-elements.html#Actionability)

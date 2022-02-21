@@ -17,28 +17,28 @@ in various ways) of your code and provide feedback on weak spots and
 opportunities for improvement. We have a few of these configured to work
 with your project repository, providing you with feedback in two forms:
 
-* Badges (at the top of [README.md](README.md))
-* Pull request checks
+- Badges (at the top of [README.md](README.md))
+- Pull request checks
 
 Unfortunately these badges and checks need to be (re)configured
 every time you or GitHub Classroom makes a new repository. This is
 
-* Every time GitHub Classroom creates a new repo from our starter code
-* Every time a group forks or copies a repository from one iteration to another
+- Every time GitHub Classroom creates a new repo from our starter code
+- Every time a group forks or copies a repository from one iteration to another
 
 Here's a checklist of actions you'll need to take for each
 new repository:
 
-* [ ] Fix Better Code Hub badge
-* [ ] Fix LGTM badge(s)
-* [ ] Enable PR checks for Better Code Hub
-* [ ] Enable PR checks for LGTM
+- [ ] Fix Better Code Hub badge
+- [ ] Fix LGTM badge(s)
+- [ ] Enable PR checks for Better Code Hub
+- [ ] Enable PR checks for LGTM
 
 This document includes:
 
-* Descriptions of the analysis tools we're currently using
-* Info on how to configure the badges
-* Info on how to enable the pull request checks
+- Descriptions of the analysis tools we're currently using
+- Info on how to configure the badges
+- Info on how to enable the pull request checks
 
 ## What analysis tools are we using and why?
 
@@ -73,10 +73,10 @@ explore others, sharing cool things that you discover.
 
 Some other services:
 
-* [CodeScene](https://codescene.io/) provides quite sophisticated analyses of your codebase,
+- [CodeScene](https://codescene.io/) provides quite sophisticated analyses of your codebase,
   but it's not trivial to make sense of the huge amount of information
   that it provides.
-* [Codacy](https://www.codacy.com/) is cool in that it understands a _lot_ of languages
+- [Codacy](https://www.codacy.com/) is cool in that it understands a _lot_ of languages
   and notations, but it's defaults can be quite "noisy" and it's not
   trivial to reconfigure.
 
@@ -170,10 +170,10 @@ UMM-CSci-3601/3601-lab4-mongo
 This tells those services to include the badges for the `3601-lab4-mongo` repository in the `UMM-CSci-3601` organization. You need to update both the organization and the repository name so they match the "name" of your repository up
 at the top of your repository page.
 
-* The organization should be changed to whatever the GitHub
+- The organization should be changed to whatever the GitHub
   organization is for this semester's course. This is probably
   something like `UMM-CSci-3601-S21`.
-* The repository is whatever name you've given your repository,
+- The repository is whatever name you've given your repository,
   like `lab-4-stupendous-wombats`.
 
 You then need to change all the instances of
