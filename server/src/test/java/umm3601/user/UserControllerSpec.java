@@ -74,7 +74,7 @@ public class UserControllerSpec {
   }
 
   @BeforeEach
-  public void setupEach() throws IOException {
+  public void setUpEach() throws IOException {
     // Reset our mock request and response objects
     mockReq.resetAll();
     mockRes.resetAll();
@@ -166,7 +166,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void GetAllUsers() throws IOException {
+  public void canGetAllUsers() throws IOException {
     // Create our fake Javalin context
     String path = "api/users";
     Context ctx = mockContext(path);
@@ -180,7 +180,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void GetUsersByAge() throws IOException {
+  public void canGetUsersWithAge37() throws IOException {
 
     // Set the query string to test with
     mockReq.setQueryString("age=37");
@@ -207,7 +207,7 @@ public class UserControllerSpec {
   * we get a reasonable error code back.
   */
   @Test
-  public void GetUsersWithIllegalAge() {
+  public void respondsAppropriatelyToIllegalAge() {
 
     mockReq.setQueryString("age=abc");
     Context ctx = mockContext("api/users");
@@ -220,7 +220,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void GetUsersByCompany() throws IOException {
+  public void canGetUsersWithCompany() throws IOException {
 
     mockReq.setQueryString("company=OHMNET");
     Context ctx = mockContext("api/users");
@@ -238,7 +238,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void GetUsersByRole() throws IOException {
+  public void canGetUsersWithRole() throws IOException {
 
     mockReq.setQueryString("role=viewer");
     Context ctx = mockContext("api/users");
@@ -252,7 +252,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void GetUsersByCompanyAndAge() throws IOException {
+  public void canGetUsersWithGivenCompanyAndAge() throws IOException {
 
     mockReq.setQueryString("company=OHMNET&age=37");
     Context ctx = mockContext("api/users");
@@ -270,7 +270,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void GetUserWithExistentId() throws IOException {
+  public void canGetUserWithSpecifiedId() throws IOException {
 
     String testID = samsId.toHexString();
 
@@ -287,7 +287,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void GetUserWithBadId() throws IOException {
+  public void respondsAppropriatelyToRequestForIllegalId() throws IOException {
     Context ctx = mockContext("api/users", Map.of("id", "bad"));
 
     assertThrows(BadRequestResponse.class, () -> {
@@ -296,7 +296,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void GetUserWithNonexistentId() throws IOException {
+  public void respondsAppropriatelyToRequestForNonexistentId() throws IOException {
     Context ctx = mockContext("api/users/", Map.of("id", "58af3a600343927e48e87335"));
 
     assertThrows(NotFoundResponse.class, () -> {
@@ -305,7 +305,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void AddUser() throws IOException {
+  public void canAddUser() throws IOException {
 
     String testNewUser = "{"
       + "\"name\": \"Test User\","
@@ -343,7 +343,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void AddInvalidEmailUser() throws IOException {
+  public void respondsAppropriateToAddingUserWithInvalidEmail() throws IOException {
     String testNewUser = "{"
       + "\"name\": \"Test User\","
       + "\"age\": 25,"
@@ -361,7 +361,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void AddInvalidAgeUser() throws IOException {
+  public void respondsAppropriateToAddingUserWithInvalidAge() throws IOException {
     String testNewUser = "{"
       + "\"name\": \"Test User\","
       + "\"age\": \"notanumber\","
@@ -379,7 +379,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void AddInvalidNameUser() throws IOException {
+  public void respondsAppropriateToAddingUserWithMissingName() throws IOException {
     String testNewUser = "{"
       + "\"age\": 25,"
       + "\"company\": \"testers\","
@@ -396,7 +396,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void AddInvalidRoleUser() throws IOException {
+  public void respondsAppropriateToAddingUserWithInvalidRole() throws IOException {
     String testNewUser = "{"
       + "\"name\": \"Test User\","
       + "\"age\": 25,"
@@ -414,7 +414,7 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void DeleteUser() throws IOException {
+  public void canDeleteUser() throws IOException {
 
     String testID = samsId.toHexString();
 
