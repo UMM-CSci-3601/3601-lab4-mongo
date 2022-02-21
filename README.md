@@ -85,7 +85,7 @@ MongoDB server version: 3.4.24
 
 Type `exit` or `^D` to exit out of the `mongo` shell tool.
 
-> :warning: Far various reasons we're still running a fairly
+> :warning: For various reasons we're still running a fairly
 old version of Mongo in the lab (v3, when the current version
 is v5). This generally won't affect, but there are features that
 v3 doesn't support. If you're trying something you found online
@@ -177,7 +177,7 @@ You can explore the databases and collections here. You can click a record to vi
 
 ## Testing and Continuous Integration
 
-You have the same testing options as before, and you can test the
+You have the same testing options as before: you can test the
 client, or the server or both.
 
 ### Testing the client

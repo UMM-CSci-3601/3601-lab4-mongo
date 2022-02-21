@@ -87,7 +87,7 @@ person you're pairing with.
   - Write tests for the server actions for the feature you added. Run
     them to make sure they fail. Then write the server code that
     makes those tests pass.
-  - Write new integration (end-to-end) tests for the new views
+  - Write new end-to-end tests for the new views
     using Cypress. Run these to make sure they fail.
   - Write unit tests for the new Angular components you are adding
     using Karma. Run them to make sure they also fail. Then write the
