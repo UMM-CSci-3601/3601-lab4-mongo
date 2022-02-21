@@ -392,7 +392,7 @@ public class UserControllerSpec {
   public void respondsAppropriateToAddingUserWithAgeOfZero() throws IOException {
     String testNewUser = "{"
       + "\"name\": \"Test User\","
-      + "\"age\": \"0\","
+      + "\"age\": 0,"
       + "\"company\": \"testers\","
       + "\"email\": \"test@example.com\","
       + "\"role\": \"viewer\""
@@ -410,7 +410,7 @@ public class UserControllerSpec {
   public void respondsAppropriateToAddingUserWithNegativeAge() throws IOException {
     String testNewUser = "{"
       + "\"name\": \"Test User\","
-      + "\"age\": \"-1\","
+      + "\"age\": -1,"
       + "\"company\": \"testers\","
       + "\"email\": \"test@example.com\","
       + "\"role\": \"viewer\""
