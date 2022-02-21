@@ -51,9 +51,7 @@ public class Server {
       event.serverStartFailed(mongoClient::close);
       event.serverStopped(mongoClient::close);
     });
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      server.stop();
-    }));
+    Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
 
     server.start(PORT_NUMBER);
 

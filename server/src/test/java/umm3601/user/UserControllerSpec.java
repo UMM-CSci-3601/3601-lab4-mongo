@@ -37,6 +37,7 @@ import io.javalin.core.validation.ValidationException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HandlerType;
+import io.javalin.http.HttpCode;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.util.ContextUtil;
 import io.javalin.plugin.json.JavalinJackson;
@@ -46,17 +47,26 @@ import io.javalin.plugin.json.JavalinJackson;
 *
 * @throws IOException
 */
+// The tests here include a ton of "magic numbers" (numeric constants).
+// It wasn't clear to me that giving all of them names would actually
+// help things. The fact that it wasn't obvious what to call some
+// of them says a lot. Maybe what this ultimately means is that
+// these tests can/should be restructured so the constants (there are
+// also a lot of "magic strings" that Checkstyle doesn't actually
+// flag as a problem) make more sense.
+@SuppressWarnings({ "MagicNumber" })
 public class UserControllerSpec {
-  private static final long maxRequestSize = new JavalinConfig().maxRequestSize;
-  MockHttpServletRequest mockReq = new MockHttpServletRequest();
-  MockHttpServletResponse mockRes = new MockHttpServletResponse();
+  private static final long MAX_REQUEST_SIZE = new JavalinConfig().maxRequestSize;
+
+  private MockHttpServletRequest mockReq = new MockHttpServletRequest();
+  private MockHttpServletResponse mockRes = new MockHttpServletResponse();
 
   private UserController userController;
 
   private ObjectId samsId;
 
-  static MongoClient mongoClient;
-  static MongoDatabase db;
+  private static MongoClient mongoClient;
+  private static MongoDatabase db;
 
   private static JavalinJackson javalinJackson = new JavalinJackson();
 
@@ -156,7 +166,7 @@ public class UserControllerSpec {
         HandlerType.INVALID,
         Map.ofEntries(
           entry(JSON_MAPPER_KEY, javalinJackson),
-          entry(ContextUtil.maxRequestSizeKey, maxRequestSize)));
+          entry(ContextUtil.maxRequestSizeKey, MAX_REQUEST_SIZE)));
   }
 
   @AfterAll
@@ -172,7 +182,7 @@ public class UserControllerSpec {
     Context ctx = mockContext(path);
     userController.getUsers(ctx);
 
-    assertEquals(200, mockRes.getStatus());
+    assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
 
     String result = ctx.resultString();
     assertEquals(db.getCollection("users").countDocuments(),
@@ -190,7 +200,7 @@ public class UserControllerSpec {
 
     userController.getUsers(ctx);
 
-    assertEquals(200, mockRes.getStatus()); // The response status should be 200
+    assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
 
     String result = ctx.resultString();
     User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
@@ -226,7 +236,7 @@ public class UserControllerSpec {
     Context ctx = mockContext("api/users");
     userController.getUsers(ctx);
 
-    assertEquals(200, mockRes.getStatus());
+    assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
     String result = ctx.resultString();
 
     User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
@@ -244,7 +254,7 @@ public class UserControllerSpec {
     Context ctx = mockContext("api/users");
     userController.getUsers(ctx);
 
-    assertEquals(200, mockRes.getStatus());
+    assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
     String result = ctx.resultString();
     for (User user : javalinJackson.fromJsonString(result, User[].class)) {
       assertEquals("viewer", user.role);
@@ -258,7 +268,7 @@ public class UserControllerSpec {
     Context ctx = mockContext("api/users");
     userController.getUsers(ctx);
 
-    assertEquals(200, mockRes.getStatus());
+    assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
     String result = ctx.resultString();
     User[] resultUsers = javalinJackson.fromJsonString(result, User[].class);
 
@@ -277,7 +287,7 @@ public class UserControllerSpec {
     Context ctx = mockContext("api/users", Map.of("id", testID));
     userController.getUser(ctx);
 
-    assertEquals(200, mockRes.getStatus());
+    assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
 
     String result = ctx.resultString();
     User resultUser = javalinJackson.fromJsonString(result, User.class);
@@ -322,7 +332,7 @@ public class UserControllerSpec {
 
     userController.addNewUser(ctx);
 
-    assertEquals(201, mockRes.getStatus());
+    assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
 
     String result = ctx.resultString();
     String id = javalinJackson.fromJsonString(result, ObjectNode.class).get("id").asText();
@@ -424,7 +434,7 @@ public class UserControllerSpec {
     Context ctx = mockContext("api/users", Map.of("id", testID));
     userController.deleteUser(ctx);
 
-    assertEquals(200, mockRes.getStatus());
+    assertEquals(HttpCode.OK.getStatus(), mockRes.getStatus());
 
     // User is no longer in the database
     assertEquals(0, db.getCollection("users").countDocuments(eq("_id", new ObjectId(testID))));
