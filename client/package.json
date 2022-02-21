@@ -8,8 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "cy:open": "cypress open",
-    "docker-build": "npm run build"
+    "cy:open": "cypress open"
   },
   "private": true,
   "dependencies": {
