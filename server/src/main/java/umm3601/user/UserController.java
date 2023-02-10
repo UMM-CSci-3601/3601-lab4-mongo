@@ -94,7 +94,8 @@ public class UserController {
     }
 
     if (ctx.queryParamMap().containsKey(COMPANY_KEY)) {
-      filters.add(regex(COMPANY_KEY,  Pattern.quote(ctx.queryParam(COMPANY_KEY)), "i"));
+      Pattern pattern = Pattern.compile(ctx.queryParam(COMPANY_KEY), Pattern.CASE_INSENSITIVE);
+      filters.add(regex(COMPANY_KEY, pattern));
     }
 
     if (ctx.queryParamMap().containsKey(ROLE_KEY)) {
