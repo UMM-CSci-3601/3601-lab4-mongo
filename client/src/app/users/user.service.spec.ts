@@ -286,13 +286,14 @@ describe('UserService', () => {
   });
 
   describe('Adding a user using `addUser()`', () => {
-    it('adds the user as expected', waitForAsync(() => {
+    it('talks to the right endpoint and is called once', waitForAsync(() => {
       // Mock the `httpClient.addUser()` method, so that instead of making an HTTP request,
       // it just returns our test data.
       const USER_ID = 'pat_id';
       const mockedMethod = spyOn(httpClient, 'post').and.returnValue(of(USER_ID));
 
-      // paying attention to what is returned didn't work well here
+      // paying attention to what is returned (undefined) didn't work well here,
+      // but I'm putting something in here to remind us to look into that
       userService.addUser(testUsers[1]).subscribe((returnedString) => {
         console.log('The thing returned was:' + returnedString);
         expect(mockedMethod)
