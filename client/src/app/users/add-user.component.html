@@ -1,14 +1,11 @@
-<!-- example from
-https://github.com/AngularTemplates/angular-forms-and-validations/blob/master/src/app/form-component/form.component.html
-is potentially helpful and contributed to the shaping of this example -->
-<div fxLayout="row">
-  <div fxFlex fxFlex.gt-sm="80" fxFlexOffset.gt-sm="10">
+<div class="flex-row">
+  <div class="flex-1" fxFlex.gt-sm="80" fxFlexOffset.gt-sm="10">
     <form [formGroup]="addUserForm" (ngSubmit)="submitForm();">
-    <mat-card class="add-user-card">
+    <mat-card appearance="outlined" class="add-user-card">
         <mat-card-header>
           <mat-card-title class="add-user-title">New User</mat-card-title>
         </mat-card-header>
-        <mat-card-content fxLayout="column">
+        <mat-card-content class="flex-col">
           <mat-form-field>
             <mat-label>Name</mat-label>
             <input matInput placeholder="Name" formControlName="name"

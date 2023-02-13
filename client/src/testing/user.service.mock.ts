@@ -5,10 +5,9 @@ import { UserService } from '../app/users/user.service';
 
 /**
  * A "mock" version of the `UserService` that can be used to test components
- * without having to create an actual service.
+ * without having to create an actual service. It needs to be `Injectable` since
+ * that's how services are typically provided to components.
  */
-// It needs to be `Injectable` since that's how services are typically
-// provided to components.
 @Injectable()
 export class MockUserService extends UserService {
   static testUsers: User[] = [

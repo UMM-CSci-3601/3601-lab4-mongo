@@ -8,6 +8,15 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
+// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
+//  The following line adds:
+//    1. Default typography styles for all components
+//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
+//  If you specify typography styles for the components you use elsewhere, you should delete this line.
+//  If you don't need the default component typographies but still want the hierarchy styles,
+//  you can delete this line and instead use:
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
+@include mat.all-component-typographies();
 
 // This is to be able to theme parts of the app dynamically depending on theme (right now: light or dark)
 // You can put styles in this mixin and the theme variables will refer to the actual theme being used (light or dark)
@@ -103,3 +112,38 @@ body {
 .mat-flat-button {
   text-transform: uppercase;
 }
+
+/////////// Remove flex-layout and replace with CSS ////////////////////
+// https://github.com/angular/flex-layout/issues/1426 post by "anisabboud" 11-4-2022
+// Flex row/col + grid.
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.grid {
+  display: grid;
+}
+
+// Flex-wrap utils.
+.flex-wrap {
+  flex-wrap: wrap;
+}  // Mostly used with flex-row, when wrapping is desired.
+
+.flex-col-xs {
+  @media screen and (max-width: 599px) {
+    flex-direction: column;
+  }
+}  // Switch from flex-row to flex-col on mobile.
+
+// Gap.
+.gap-4 { gap: 4px; }
+.gap-8 { gap: 8px; }
+.gap-10 { gap: 10px; }
+
+// Flex/grow/shrink properties https://developer.mozilla.org/en-US/docs/Web/CSS/flex.
+.flex-1 { flex: 1 }  // Same as flex: 1 1 0 (grow, shrink, basis 0). Has similar effect to width: 100%;
+.flex-grow { flex-grow: 1; }  // Same as flex: 1 1 auto (grow, shrink, basis auto). For spacer, etc.
