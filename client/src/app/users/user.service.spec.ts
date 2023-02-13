@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { User } from './user';
 import { UserService } from './user.service';
 
-describe('User service: ', () => {
+describe('UserService', () => {
   // A small collection of test users
   const testUsers: User[] = [
     {
@@ -47,10 +48,10 @@ describe('User service: ', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule]
     });
-    httpClient = TestBed.inject(HttpClient);
-    httpTestingController = TestBed.inject(HttpTestingController);
     // Construct an instance of the service with the mock
     // HTTP client.
+    httpClient = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     userService = new UserService(httpClient);
   });
 
@@ -59,140 +60,180 @@ describe('User service: ', () => {
     httpTestingController.verify();
   });
 
-  describe('getUsers()', () => {
+  describe('When getUsers() is called with no parameters', () => {
+    it('calls `api/users`', waitForAsync(() => {
+      // Mock the `httpClient.get()` method, so that instead of making an HTTP request,
+      // it just returns our test data.
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testUsers));
 
-    it('calls `api/users` when `getUsers()` is called with no parameters', () => {
-      // Assert that the users we get from this call to getUsers()
-      // should be our set of test users. Because we're subscribing
-      // to the result of getUsers(), this won't actually get
-      // checked until the mocked HTTP request 'returns' a response.
-      // This happens when we call req.flush(testUsers) a few lines
-      // down.
-      userService.getUsers().subscribe(
-        users => expect(users).toBe(testUsers)
-      );
+      // Call `userService.getUsers()` and confirm that the correct call has
+      // been made with the correct arguments.
+      //
+      // We have to `subscribe()` to the `Observable` returned by `getUsers()`.
+      // The `users` argument in the function is the array of Users returned by
+      // the call to `getUsers()`.
+      userService.getUsers().subscribe((users: User[]) => {
+        // The array of `User`s returned by `getUsers()` should be
+        // the array `testUsers`.
+        expect(users)
+          .withContext('expected users')
+          .toEqual(testUsers);
+        // The mocked method (`httpClient.get()`) should have been called
+        // exactly one time.
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        // The mocked method should have been called with two arguments:
+        //   * the appropriate URL ('/api/users' defined in the `UserService`)
+        //   * An options object containing an empty `HttpParams`
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(userService.userUrl, { params: new HttpParams() });
+      });
+    }));
+  });
 
-      // Specify that (exactly) one request will be made to the specified URL.
-      const req = httpTestingController.expectOne(userService.userUrl);
-      // Check that the request made to that URL was a GET request.
-      expect(req.request.method).toEqual('GET');
-      // Check that the request had no query parameters.
-      expect(req.request.params.keys().length).toBe(0);
-      // Specify the content of the response to that request. This
-      // triggers the subscribe above, which leads to that check
-      // actually being performed.
-      req.flush(testUsers);
+  describe('When getUsers() is called with parameters, it correctly forms the HTTP request (Javalin/Server filtering)', () => {
+    /*
+    * We really don't care what `getUsers()` returns in the cases
+    * where the filtering is happening on the server. Since all the
+    * filtering is happening on the server, `getUsers()` is really
+    * just a "pass through" that returns whatever it receives, without
+    * any "post processing" or manipulation. So the tests in this
+    * `describe` block all confirm that the HTTP request is properly formed
+    * and sent out in the world, but don't _really_ care about
+    * what `getUsers()` returns as long as it's what the HTTP
+    * request returns.
+    *
+    * So in each of these tests, we'll keep it simple and have
+    * the (mocked) HTTP request return the entire list `testUsers`
+    * even though in "real life" we would expect the server to
+    * return return a filtered subset of the users.
+    */
+
+    it('correctly calls api/users with filter parameter \'admin\'', () => {
+        const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testUsers));
+
+        userService.getUsers({ role: 'admin' }).subscribe((users: User[]) => {
+          // The array of `User`s returned by `getUsers()` should be
+          // the array `testUsers`. This is "weird" because we'd truly be expecting
+          // the server to return just `admin` users, but as mentioned above, we're
+          // not trying to get the server here.
+          expect(users)
+            .withContext('expected users')
+            .toEqual(testUsers);
+          expect(mockedMethod)
+            .withContext('one call')
+            .toHaveBeenCalledTimes(1);
+          // The mocked method should have been called with two arguments:
+          //   * the appropriate URL ('/api/users' defined in the `UserService`)
+          //   * An options object containing an `HttpParams` with the `role`:`admin`
+          //     key-value pair.
+          expect(mockedMethod)
+            .withContext('talks to the correct endpoint')
+            .toHaveBeenCalledWith(userService.userUrl, { params: new HttpParams().set('role', 'admin') });
+        });
     });
 
-    describe('Calling getUsers() with parameters correctly forms the HTTP request', () => {
-      /*
-       * We really don't care what `getUsers()` returns in the cases
-       * where the filtering is happening on the server. Since all the
-       * filtering is happening on the server, `getUsers()` is really
-       * just a "pass through" that returns whatever it receives, without
-       * any "post processing" or manipulation. So the tests in this
-       * `describe` block all confirm that the HTTP request is properly formed
-       * and sent out in the world, but don't _really_ care about
-       * what `getUsers()` returns as long as it's what the HTTP
-       * request returns.
-       *
-       * So in each of these tests, we'll keep it simple and have
-       * the (mocked) HTTP request return the entire list `testUsers`
-       * even though in "real life" we would expect the server to
-       * return return a filtered subset of the users.
-       */
+    it('correctly calls api/users with filter parameter \'age\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testUsers));
 
-      it('correctly calls api/users with filter parameter \'admin\'', () => {
-        userService.getUsers({ role: 'admin' }).subscribe(
-          users => expect(users).toBe(testUsers)
-        );
-
-        // Specify that (exactly) one request will be made to the specified URL with the role parameter.
-        const req = httpTestingController.expectOne(
-          (request) => request.url.startsWith(userService.userUrl) && request.params.has('role')
-        );
-
-        // Check that the request made to that URL was a GET request.
-        expect(req.request.method).toEqual('GET');
-
-        // Check that the role parameter was 'admin'
-        expect(req.request.params.get('role')).toEqual('admin');
-
-        req.flush(testUsers);
+      userService.getUsers({ age: 25 }).subscribe((users: User[]) => {
+        expect(users)
+          .withContext('expected users')
+          .toEqual(testUsers);
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(userService.userUrl, { params: new HttpParams().set('age', '25') });
       });
+    });
 
-      it('correctly calls api/users with filter parameter \'age\'', () => {
+    it('correctly calls api/users with multiple filter parameters', () => {
+        const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testUsers));
 
-        userService.getUsers({ age: 25 }).subscribe(
-          users => expect(users).toBe(testUsers)
-        );
+        userService.getUsers({ role: 'editor', company: 'IBM', age: 37 }).subscribe((users: User[]) => {
+          // This test checks that the call to `userService.getUsers()` does several things:
+          //   * It returns the expected array of users (namely `testUsers` as discussed above).
+          //   * It calls the mocked method (`HttpClient#get()`) exactly once.
+          //   * It calls it with the correct endpoint (`userService.userUrl`).
+          //   * It calls it with the correct parameters:
+          //      * There should be three parameters (this makes sure that there aren't extras).
+          //      * There should be a "role:editor" key-value pair.
+          //      * And a "company:IBM" pair.
+          //      * And a "age:37" pair.
 
-        // Specify that (exactly) one request will be made to the specified URL with the role parameter.
-        const req = httpTestingController.expectOne(
-          (request) => request.url.startsWith(userService.userUrl) && request.params.has('age')
-        );
-
-        // Check that the request made to that URL was a GET request.
-        expect(req.request.method).toEqual('GET');
-
-        // Check that the role parameter was 'admin'
-        expect(req.request.params.get('age')).toEqual('25');
-
-        req.flush(testUsers);
-      });
-
-      it('correctly calls api/users with multiple filter parameters', () => {
-
-        userService.getUsers({ role: 'editor', company: 'IBM', age: 37 }).subscribe(
-          users => expect(users).toBe(testUsers)
-        );
-
-        // Specify that (exactly) one request will be made to the specified URL with the role parameter.
-        const req = httpTestingController.expectOne(
-          (request) => request.url.startsWith(userService.userUrl)
-            && request.params.has('role') && request.params.has('company') && request.params.has('age')
-        );
-
-        // Check that the request made to that URL was a GET request.
-        expect(req.request.method).toEqual('GET');
-
-        // Check that the role parameters are correct
-        expect(req.request.params.get('role')).toEqual('editor');
-        expect(req.request.params.get('company')).toEqual('IBM');
-        expect(req.request.params.get('age')).toEqual('37');
-
-        req.flush(testUsers);
-      });
+          // This gets the arguments for the first (and in this case only) call to the `mockMethod`.
+          const [url, options] = mockedMethod.calls.argsFor(0);
+          // Gets the `HttpParams` from the options part of the call.
+          // `options.param` can return any of a broad number of types;
+          // it is in fact an instance of `HttpParams`, and I need to use
+          // that fact, so I'm casting it (the `as HttpParams` bit).
+          const calledHttpParams: HttpParams = (options.params) as HttpParams;
+          expect(users)
+            .withContext('expected users')
+            .toEqual(testUsers);
+          expect(mockedMethod)
+            .withContext('one call')
+            .toHaveBeenCalledTimes(1);
+          expect(url)
+            .withContext('talks to the correct endpoint')
+            .toEqual(userService.userUrl);
+          expect(calledHttpParams.keys().length)
+            .withContext('should have 3 params')
+            .toEqual(3);
+          expect(calledHttpParams.get('role'))
+            .withContext('role of editor')
+            .toEqual('editor');
+          expect(calledHttpParams.get('company'))
+            .withContext('company being IBM')
+            .toEqual('IBM');
+          expect(calledHttpParams.get('age'))
+            .withContext('age being 37')
+            .toEqual('37');
+        });
     });
   });
 
-  describe('getUserByID()', () => {
-    it('calls api/users/id with the correct ID', () => {
+  describe('When getUserByID() is given an ID', () => {
+    it('calls api/users/id with the correct ID', waitForAsync(() => {
       // We're just picking a User "at random" from our little
       // set of Users up at the top.
       const targetUser: User = testUsers[1];
       const targetId: string = targetUser._id;
 
-      userService.getUserById(targetId).subscribe(
+      // Mock the `httpClient.get()` method so that instead of making an HTTP request
+      // it just returns our test data
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(targetUser));
+
+      // Call `userService.getUser()` and confirm that the correct call has
+      // been made with the correct arguments.
+      //
+      // We have to `subscribe()` to the `Observable` returned by `getUserById()`.
+      // The `user` argument in the function below is the thing of type User returned by
+      // the call to `getUserById()`.
+      userService.getUserById(targetId).subscribe((user: User) => {
+        // The `User` returned by `getUserById()` should be targetUser.
         // This `expect` doesn't do a _whole_ lot.
-        // Since the `targetUser`
-        // is what the mock `HttpClient` returns in the
-        // `req.flush(targetUser)` line below, this
-        // really just confirms that `getUserById()`
+        // This really just confirms that `getUserById()`
         // doesn't in some way modify the user it
         // gets back from the server.
-        user => expect(user).toBe(targetUser)
-      );
-
-      const expectedUrl: string = userService.userUrl + '/' + targetId;
-      const req = httpTestingController.expectOne(expectedUrl);
-      expect(req.request.method).toEqual('GET');
-
-      req.flush(targetUser);
-    });
+        expect(user)
+          .withContext('expected user')
+          .toBe(targetUser);
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(userService.userUrl + '/' + targetId);
+      });
+    }));
   });
 
-  describe('filterUsers()', () => {
+  describe('Filtering on the client using `filterUsers()` (Angular/Client filtering)', () => {
     /*
      * Since `filterUsers` actually filters "locally" (in
      * Angular instead of on the server), we do want to
@@ -244,17 +285,23 @@ describe('User service: ', () => {
     });
   });
 
-  it('addUser() posts to api/users', () => {
+  describe('Adding a user using `addUser()`', () => {
+    it('adds the user as expected', waitForAsync(() => {
+      // Mock the `httpClient.addUser()` method, so that instead of making an HTTP request,
+      // it just returns our test data.
+      const USER_ID = 'pat_id';
+      const mockedMethod = spyOn(httpClient, 'post').and.returnValue(of(USER_ID));
 
-    userService.addUser(testUsers[1]).subscribe(
-      id => expect(id).toBe('testid')
-    );
-
-    const req = httpTestingController.expectOne(userService.userUrl);
-
-    expect(req.request.method).toEqual('POST');
-    expect(req.request.body).toEqual(testUsers[1]);
-
-    req.flush({id: 'testid'});
+      // paying attention to what is returned didn't work well here
+      userService.addUser(testUsers[1]).subscribe((returnedString) => {
+        console.log('The thing returned was:' + returnedString);
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(userService.userUrl, testUsers[1]);
+      });
+    }));
   });
 });
