@@ -12,12 +12,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: ./client/package-lock.json
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: ./client/package-lock.json
 
     - name: Install dependencies (npm ci)
       run: npm ci
@@ -32,12 +32,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: ./client/package-lock.json
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: ./client/package-lock.json
 
     - name: Install dependencies (npm ci)
       run: npm ci
