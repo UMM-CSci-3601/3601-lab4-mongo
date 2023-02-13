@@ -57,23 +57,20 @@ export class UserListComponent implements OnInit, OnDestroy  {
       role: this.userRole,
       age: this.userAge
     })
-    .subscribe(returnedUsers => {
-      // This inner function passed to `subscribe` will be called
-      // when the `Observable` returned by `getUsers()` has one
-      // or more values to return. `returnedUsers` will be the
-      // name for the array of `Users` we got back from the
-      // server.
-      this.serverFilteredUsers = returnedUsers;
-      this.updateFilter();
-    }, err => {
-      // If there was an error getting the users, log
-      // the problem and display a message.
-      console.error('We couldn\'t get the list of users; the server might be down');
-      this.snackBar.open(
-        'Problem contacting the server – try again',
-        'OK',
-        // The message will disappear after 3 seconds.
-        { duration: 3000 });
+    .subscribe({
+      next: (returnedUsers) => {
+        this.serverFilteredUsers = returnedUsers;
+        this.updateFilter();
+      },
+      error: (e) => {
+        console.error('We couldn\'t get the list of users; the server might be down');
+        this.snackBar.open(
+          'Problem contacting the server – try again',
+          'OK',
+          // The message will disappear after 3 seconds.
+          { duration: 3000 });
+      },
+      complete: () => console.log('Users were filtered on the server')
     });
   }
 
