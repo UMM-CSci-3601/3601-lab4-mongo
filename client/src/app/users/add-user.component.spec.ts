@@ -150,9 +150,6 @@ describe('AddUserComponent', () => {
     it('should fail on ages that are too high', () => {
       ageControl.setValue(201);
       expect(ageControl.valid).toBeFalsy();
-      // I have no idea why I have to use a lower case 'l' here
-      // when it's an upper case 'L' in `Validators.maxLength(2)`.
-      // But I apparently do.
       expect(ageControl.hasError('max')).toBeTruthy();
     });
 
