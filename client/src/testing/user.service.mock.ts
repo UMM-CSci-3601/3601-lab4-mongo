@@ -55,14 +55,17 @@ export class MockUserService extends UserService {
   }
 
   getUserById(id: string): Observable<User> {
-    // If the specified ID is for the first test user,
+    // If the specified ID is for one of the test users,
     // return that user, otherwise return `null` so
     // we can test illegal user requests.
     if (id === MockUserService.testUsers[0]._id) {
       return of(MockUserService.testUsers[0]);
+    } else if (id === MockUserService.testUsers[1]._id) {
+      return of(MockUserService.testUsers[1]);
+    } else if (id === MockUserService.testUsers[2]._id) {
+      return of(MockUserService.testUsers[2]);
     } else {
       return of(null);
     }
   }
-
 }
