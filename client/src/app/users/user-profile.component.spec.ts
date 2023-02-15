@@ -49,6 +49,12 @@ describe('UserProfileComponent', () => {
     // to update. Our `UserProfileComponent` subscribes to that, so
     // it should update right away.
     activatedRoute.setParamMap({ id: expectedUser._id });
+    // There is neat stuff happening in ngOnInit, and to make that visible in the tests
+    // we trigger ngOnInit() so that our observables will all be up to date
+    // Since we manipulate the paramMap in our test (and don't do that for real in the code),
+    // we needed call to ngOnInit here to update the profile component and thus renew our subscription.
+    // This holds for all the subsequent calls to `component.ngOnInit()` as well.
+    component.ngOnInit();
     expect(component.user).toEqual(expectedUser);
   });
 
@@ -59,17 +65,20 @@ describe('UserProfileComponent', () => {
     // to update. Our `UserProfileComponent` subscribes to that, so
     // it should update right away.
     activatedRoute.setParamMap({ id: expectedUser._id });
+    component.ngOnInit();
     expect(component.user).toEqual(expectedUser);
 
     // Changing the paramMap should update the displayed user profile.
     expectedUser = MockUserService.testUsers[1];
     activatedRoute.setParamMap({ id: expectedUser._id });
+    component.ngOnInit();
     expect(component.user).toEqual(expectedUser);
   });
 
   it('should have `null` for the user for a bad ID', () => {
     activatedRoute.setParamMap({ id: 'badID' });
 
+    component.ngOnInit();
     // If the given ID doesn't map to a user, we expect the service
     // to return `null`, so we would expect the component's user
     // to also be `null`.

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { User } from './user';
 import { UserService } from './user.service';
-import { map, switchMap } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-profile',
@@ -28,6 +28,10 @@ export class UserProfileComponent implements OnInit {
       // maps the Observable<string> (i.e., the id) into the Observable<User>
       // an observable... for each id that comes in, process and return an observable of all the results from that thing that cme in
       switchMap((id: string) => this.userService.getUserById(id)),
+      // We only ever want the first value from the paramMap `Observable`;
+      // limiting what we return here to that first value ensures that this
+      // pipeline terminates and the subscription is garbage collected.
+      first()
     ).subscribe({
       next: user => this.user = user,
       // This is terrible error handling; we should tell the user something.
