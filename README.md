@@ -64,25 +64,24 @@ Error: couldn't connect to server 127.0.0.1:27017, connection attempt failed: So
 If everything's good you should get something like this:
 
 ```text
-MongoDB shell version v3.4.24
+MongoDB shell version v5.0.14
 connecting to: mongodb://127.0.0.1:27017
-MongoDB server version: 3.4.24
+MongoDB server version: 5.0.14
 ```
 
 Type `exit` or `^D` to exit out of the `mongo` shell tool.
 
-> :warning: For various reasons we're still running a fairly
-old version of Mongo in the lab (v3, when the current version
-is v5). This generally won't affect, but there are features that
-v3 doesn't support. If you're trying something you found online
+> :warning: For various reasons we're running a slightly
+older version of Mongo in the lab (v5, when the current version
+is v6). This generally won't affect, but there may be features that
+v5 doesn't support. If you're trying something you found online
 and it doesn't seem to work as advertised, you might check and
-see if it's a v4 or v5 feature.
+see if it's a v6 feature.
 >
 > When looking things up in the MongoDB docs, it's probably wise
-to use [the v3.4 documentation](https://docs.mongodb.com/v3.4/).
+to use [the v5.0 documentation](https://www.mongodb.com/docs/v5.0/).
 >
-> Hopefully we'll be able to upgrade Mongo over Spring Break, so
-this might get better in a few weeks.
+
 
 ### Open the project in VS Code
 
@@ -129,9 +128,10 @@ For the most part, you will be using a local installation of Mongo as a dev (dev
 
 To recap, **here are the steps needed to _run_ the project**:
 
-1. Go into the `server` directory and enter `./gradlew run`.
-2. In a _different_ terminal, go into the `client` directory and enter `ng server`.
-3. You can then go to [`localhost:4200`](http://localhost:4200) in your favorite web browser and see
+1. Go into the `database` directory and enter `./mongoseed.sh` to run the script that will seed the database.
+2. Go into the `server` directory and enter `./gradlew run` to run your server.
+3. In a _different_ terminal, go into the `client` directory and enter `ng serve` to make the client available.
+4. You can then go to [`localhost:4200`](http://localhost:4200) in your favorite web browser and see
    your nifty Angular app.
 
 ### MongoDB in VS Code
@@ -245,9 +245,10 @@ There are badges above that show the status of these checks on the master branch
 
 ### MongoDB (database)
 
-- [The MongoDB Manual](https://docs.mongodb.com/v3.4/)
+- [The MongoDB Manual](https://www.mongodb.com/docs/v5.0/)
 - [MongoDB Java Drivers](https://mongodb.github.io/mongo-java-driver/)
-  - [MongoDB Driver 3.12 Documentation](https://mongodb.github.io/mongo-java-driver/3.12/driver/)
+  - [MongoDB Driver 4.8 Documentation](https://mongodb.github.io/mongo-java-driver/4.8/)
+  - [Documentation specific to the driver](https://www.mongodb.com/docs/drivers/java/sync/v4.8/)
 - [MongoJack](https://mongojack.org/)
 - [JSON Generator](https://next.json-generator.com/) for generating
   seed data for testing
