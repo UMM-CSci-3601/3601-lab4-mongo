@@ -55,7 +55,6 @@ describe('UserProfileComponent', () => {
   });
 
   it('should navigate to correct user when the id parameter changes', () => {
-    console.log('In parameter changing test');
     let expectedUser: User = MockUserService.testUsers[0];
     // Setting this should cause anyone subscribing to the paramMap
     // to update. Our `UserProfileComponent` subscribes to that, so
