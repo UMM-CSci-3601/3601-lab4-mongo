@@ -10,14 +10,10 @@
 
 ## Getting started
 
-- Remember to set up ZenHub with your stories and estimates
+- Remember to set up GitHub Projects with your stories and estimates
 - Turn in the URL of the GitHub repository for your group in Canvas. This will make it easier for us to figure out which team is "Snoozing Llamas".
 
 Definitely ask if you're ever confused about what you need to do for a given task.
-
-:warning: Make sure you fix your badges and enable the
-quality checks as described in
-[CODE_QUALITY_CHECKS](./CODE_QUALITY_CHECKS.md).
 
 ## Exploring the project
 
@@ -40,7 +36,7 @@ Spend some time looking over the project with these questions in mind. (Unlike t
 
 ## Overview of the lab
 
-- Re-implement the todo API, this time pulling data from MongoDB rather than from a flat JSON file. The new elements of this lab are primarily in the MongoDB interaction, which is mostly in the Java server code.
+- Re-implement the todo API, this time pulling data from MongoDB rather than from a flat JSON file. The new elements of this lab are primarily in the MongoDB interaction, which is mostly in the Java server code (including `TodoController.java`).
 - When displaying the todos in your Angular front-end, make thoughtful decisions about whether work like filtering
   should be done in Angular or via database queries. For example, you
   might have the database filter out all the todos belonging to a
@@ -53,15 +49,19 @@ Spend some time looking over the project with these questions in mind. (Unlike t
 - Filter todos by owner
 - Filter todos by contents of the body
 - Filter todos by category
+- Combinations of filters
+- Sort by a todo field (status, owner, body contents, or category)
+- Limit the number of todos returned
 - Ability to add new todos. This requires:
   - An Angular form/page that allows the user to enter the information for a new todo with reasonable controls and validation.
   - A new endpoint on the server that allows clients to add new todos.
   - Logic in the server to add that new todo to the database and return the new ID.
 - Testing of all of the above.
+- Display the todos in a reasonable way using at least two nifty Angular Material features from [here](https://material.angular.io/components/categories)!
 
 ## Workflow and Continuous Integration
 
-You should organize your work into features, where each feature is an (small) epic or a single story in ZenHub. Each feature should "slice the cake", including server implementation and testing, Angular implementation and testing, and end-to-end testing.
+You should organize your work into features, where each feature is an (small) epic or a single story in GitHub Projects. Each feature should "slice the cake", including server implementation and testing, Angular implementation and testing, and end-to-end testing.
 
 :warning: Keep the features as small and focussed as
 possible. Otherwise things like code reviews become a huge burden,
@@ -91,7 +91,7 @@ person you're pairing with.
     using Cypress. Run these to make sure they fail.
   - Write unit tests for the new Angular components you are adding
     using Karma. Run them to make sure they also fail. Then write the
-    Angular code that makes those unit and integration tests pass.
+    Angular code that makes those unit and integration/e2e tests pass.
   - Address failing builds.
 - Perform code reviews especially if you're not pair programming.
   _Ask (your partner, the class, the instructor) about things you don't understand!_
