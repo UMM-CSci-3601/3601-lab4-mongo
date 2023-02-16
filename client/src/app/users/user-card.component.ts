@@ -9,8 +9,6 @@ import { User } from './user';
 export class UserCardComponent {
 
   @Input() user: User;
-  @Input() simple ? = false;
-
-  constructor() { }
+  @Input() simple?: boolean = false;
 
 }

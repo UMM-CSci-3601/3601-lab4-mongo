@@ -1,28 +1,13 @@
-!["Broken" badge to remind us to fix the URLs on the "real" badges](https://img.shields.io/badge/FIX_BADGES-Badges_below_need_to_be_updated-red)
-
-> **Make sure you update the links for the badges below so they point
-> to _your_ project and not the "starter" copy. You also need to make
-> sure that analysis checks are being run on all pull requests.** See
-> [`CODE-QUALITY-CHECKS.md`](CODE-QUALITY-CHECKS.md)
-> for info on how to do that.
->
-> Feel free to remove the badge above and this text when you've
-> dealt with that.
-
 # CSCI 3601 Lab 4 - MongoDB <!-- omit in toc -->
 
 [![Server Build Status](../../actions/workflows/server.yml/badge.svg)](../../actions/workflows/server.yml)
 [![Client Build Status](../../actions/workflows/client.yaml/badge.svg)](../../actions/workflows/client.yaml)
 [![End to End Build Status](../../actions/workflows/e2e.yaml/badge.svg)](../../actions/workflows/e2e.yaml)
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/UMM-CSci-3601/3601-lab4-mongo?branch=main)](https://bettercodehub.com/)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/UMM-CSci-3601/3601-lab4-mongo.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/UMM-CSci-3601/3601-lab4-mongo/alerts/)
-
 - [Setup](#setup)
-  - [Make sure you have Mongo running on your computer](#make-sure-you-have-mongo-running-on-your-computer)
+  - [Make sure you have Mongo running on your (lab) computer](#make-sure-you-have-mongo-running-on-your-lab-computer)
   - [Open the project in VS Code](#open-the-project-in-vs-code)
   - [Installing the client dependencies](#installing-the-client-dependencies)
-  - [Enable ESLint in VS Code](#enable-eslint-in-vs-code)
   - [Seeding the Database](#seeding-the-database)
 - [Running your project](#running-your-project)
   - [MongoDB in VS Code](#mongodb-in-vs-code)
@@ -40,8 +25,9 @@
 
 This is your starter code for Lab 4. The main goal here, as
 described in [LABTASKS](./LABTASKS.md), is to update the server
-code to actually use the MongoDB database instead of using a fixed
-set of users and todos. You'll also add functionality to do things
+code to actually use the MongoDB database instead of using the fixed
+set of users and todos in Labs 2 and 3.
+You'll also add functionality to do things
 like adding new todos; this will require making changes all the
 way through from the Angular client, through the Java(lin) server,
 to the database.
@@ -57,10 +43,14 @@ group using GitHub classroom, you can clone your repository using the command li
 4. Select the correct repo from the list of repositories
 5. Select **Clone the repo!**
 
-### Make sure you have Mongo running on your computer
+### Make sure you have Mongo running on your (lab) computer
 
 For all of this to work, it's critical that you have Mongo installed
-and working, as described in the system setup documentation from the
+and working. We should have that running on all the lab computers
+(although it's good to confirm that). If you also want to do
+development on your own computer you'll need to make sure you
+have MongoDB install, as described in the system setup
+documentation from the
 beginning of the semester. If you're unsure if it's set up and
 working correctly, try running `mongo`.
 
@@ -71,7 +61,28 @@ message like:
 Error: couldn't connect to server 127.0.0.1:27017, connection attempt failed: SocketException: Error connecting to 127.0.0.1:27017 :: caused by :: Connection refused :
 ```
 
-(Type `exit` to exit out of the `mongo` tool.)
+If everything's good you should get something like this:
+
+```text
+MongoDB shell version v3.4.24
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.24
+```
+
+Type `exit` or `^D` to exit out of the `mongo` shell tool.
+
+> :warning: For various reasons we're still running a fairly
+old version of Mongo in the lab (v3, when the current version
+is v5). This generally won't affect, but there are features that
+v3 doesn't support. If you're trying something you found online
+and it doesn't seem to work as advertised, you might check and
+see if it's a v4 or v5 feature.
+>
+> When looking things up in the MongoDB docs, it's probably wise
+to use [the v3.4 documentation](https://docs.mongodb.com/v3.4/).
+>
+> Hopefully we'll be able to upgrade Mongo over Spring Break, so
+this might get better in a few weeks.
 
 ### Open the project in VS Code
 
@@ -93,41 +104,21 @@ Before you start working you will need to install the dependencies for the clien
 1. Move into the `client` directory (`cd client`)
 2. Run `npm install`
 
-### Enable ESLint in VS Code
-
-ESLint is a tool for checking the quality and style of your client TypeScript
-and template HTML code, and can provide valuable "live" feedback on
-your coding in VS Code.
-
-Since this is the first time we will be using ESLint there is an additional step to make sure the VS Code extension is working in the project. When you first open a TypeScript file you will see at the bottom right that ESLint is disabled.
-
-![image](https://user-images.githubusercontent.com/1300395/107999308-bc59ec80-6fac-11eb-9784-75a471a50aa4.png)
-
-Click the red "ESLINT" to open this dialog:
-
-![image](https://user-images.githubusercontent.com/1300395/107996971-528b1400-6fa7-11eb-89bc-afc71747f820.png)
-
-Click "Allow Everywhere" to enable ESLint.
-
-You can also open this dialog with the following steps:
-
-1. Hit `CTRL + SHIFT + P` (`⌘ + ⇧ + P` on Macs) to open the Command Palette. You can also find this by going to the "View" menu and clicking "Command Palette..."
-2. Start typing and select "ESlint: Manage Library Execution". That should open a dialog seen above.
-
 ### Seeding the Database
 
-To give yourself some data to work with instead of starting with an empty database in our development environment, you need to 'seed' the database with some starter data. Seed data and the seed script are stored in the top level directory `database`. To seed the database, move into that directory and run `./mongoseed.sh` (or `.\mongoseed.bat` on Windows). This will take each of the JSON files in `database/seed/` and insert their elements into the `dev` database.
+To give yourself some data to work with instead of starting with an empty database in our development environment, you need to 'seed' the database with some starter data. Seed data and the seed script are stored in the top level directory `database`. To seed the database, move into that directory and run `./mongoseed.sh`. This will take each of the JSON files in `database/seed/` and insert their elements into the `dev` database.
 
 These scripts also drop the database before seeding it so it is clean. You should run this after first cloning the project and again anytime you want to reset the database or you add new seed data to the `database/seed/` directory.
 
-:warning: Our example E2E tests also reseed the `dev` database
+:warning: Our E2E tests also reseed the `dev` database
 whenever you run them to ensure that those tests happen in a predictable
 state, so be prepared for that.
 
 ## Running your project
 
 - The **run** Gradle task (`./gradlew run` in the `server` directory) will still run your Javalin server, which is available at [`localhost:4567`](http://localhost:4567).
-- The **build** task will still _build_ the server, but not run it.
+- The **build** task will _build_ the server (including running
+  Checkstyle and the tests), but not run it.
 
 Once you have successfully run `npm install`, in order to serve up the _client side_ of your project, you will run
 `ng serve` (from the `client` directory as well). The client will be available by default at [`localhost:4200`](http://localhost:4200). If your server is running, you will be able to see data for users if you navigate to the right place in the project.
@@ -162,7 +153,6 @@ You can leave all the default settings and click the green "Connect" button to a
 
 ![image](https://user-images.githubusercontent.com/1300395/109006728-fabc6f00-7670-11eb-9f15-55a39f7b9674.png)
 
-
 You will then have the MongoDB server in the sidebar.
 
 </details>
@@ -173,7 +163,8 @@ You can explore the databases and collections here. You can click a record to vi
 
 ## Testing and Continuous Integration
 
-There are now more testing options! You can test the client, or the server or both.
+You have the same testing options as before: you can test the
+client, or the server or both.
 
 ### Testing the client
 
@@ -184,7 +175,7 @@ From the `client` directory:
   - This will run "forever", updating both in your terminal and in the Chrome
     window that gets generated. Typing CTRL-C in the terminal window will end
     the `ng test` process and close the generated Chrome window.
-  - You can add `ng test --watch=false` if you just want to run the tests once
+  - You can add `ng test --no-watch` if you just want to run the tests once
     instead of going into the "run forever" mode.
 - `ng test --code-coverage` runs the client tests and generates a coverage report
   - It generates a coverage report you can find in your client directory `client/coverage/client/index.html`.
@@ -239,23 +230,22 @@ There are badges above that show the status of these checks on the master branch
 
 ### Angular (client)
 
-* [Angular Unit Testing (Karma)](https://angular.io/guide/testing)
-* [Angular Routing](https://angular.io/guide/router)
-* [Angular Forms](https://angular.io/guide/forms-overview)
-* [Angular Material](https://material.angular.io/)
-* [What are environments in Angular](https://angular.io/guide/build#configuring-application-environments)
-* [Angular CLI](https://angular.io/cli)
+- [Angular Unit Testing (Karma)](https://angular.io/guide/testing)
+- [Angular Routing](https://angular.io/guide/router)
+- [Angular Forms](https://angular.io/guide/forms-overview)
+- [Angular Material](https://material.angular.io/)
+- [What are environments in Angular](https://angular.io/guide/build#configuring-application-environments)
+- [Angular CLI](https://angular.io/cli)
 
 ### Javalin (server)
 
 - [Javalin Documentation](https://javalin.io/documentation)
 - [Javalin Tutorials](https://javalin.io/tutorials/)
   - [Testing Javalin Applications](https://javalin.io/tutorials/testing)
-  - [Mocking Javalin classes in Mockito](https://javalin.io/tutorials/mockito-testing)
 
 ### MongoDB (database)
 
-- [The MongoDB Manual](https://docs.mongodb.com/manual/)
+- [The MongoDB Manual](https://docs.mongodb.com/v3.4/)
 - [MongoDB Java Drivers](https://mongodb.github.io/mongo-java-driver/)
   - [MongoDB Driver 3.12 Documentation](https://mongodb.github.io/mongo-java-driver/3.12/driver/)
 - [MongoJack](https://mongojack.org/)
@@ -264,7 +254,7 @@ There are badges above that show the status of these checks on the master branch
 
 ### Cypress (end-to-end testing)
 
-* [Cypress Docs](https://docs.cypress.io/)
-* [Cypress Best Practices](https://docs.cypress.io/guides/references/best-practices.html)
-* [Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress.html#Cypress-Can-Be-Simple-Sometimes)
-* [Interacting with Elements in Cypress](https://docs.cypress.io/guides/core-concepts/interacting-with-elements.html#Actionability)
+- [Cypress Docs](https://docs.cypress.io/)
+- [Cypress Best Practices](https://docs.cypress.io/guides/references/best-practices.html)
+- [Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress.html)
+- [Interacting with Elements in Cypress](https://docs.cypress.io/guides/core-concepts/interacting-with-elements.html)

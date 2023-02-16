@@ -21,7 +21,7 @@ quality checks as described in
 
 ## Exploring the project
 
-The structure of this project should be nearly identical to that of lab 3, and as such there really isn't much excitement in that department.
+The structure of this project should be nearly identical to that of Lab 3, and as such there really isn't much excitement in that department.
 
 The server is, for the most part, the same as it has been in the past two labs. The difference to look for here is in how the server gets the data it sends out in reply to requests.
 
@@ -34,7 +34,7 @@ Spend some time looking over the project with these questions in mind. (Unlike t
    in `UserController.getUsers(Context...)`? What's the role of
    the variable `filters` in that method?
 1. What is happening in the `UserControllerSpec.setUpEach()` method?
-1. What's being tested in `UserControllerSpec.GetUsersByAge()`?
+1. What's being tested in `UserControllerSpec.canGetUsersWithAge37()`?
    How is that test implemented?
 1. Follow the process for adding a new user. What role does `UserController` play in the process?
 
@@ -42,8 +42,9 @@ Spend some time looking over the project with these questions in mind. (Unlike t
 
 - Re-implement the todo API, this time pulling data from MongoDB rather than from a flat JSON file. The new elements of this lab are primarily in the MongoDB interaction, which is mostly in the Java server code.
 - When displaying the todos in your Angular front-end, make thoughtful decisions about whether work like filtering
-  should be done in Angular or via database queries. For example, have the database filter out all the todos belonging to a single user,
-  but let Angular filter by category, body, or status.
+  should be done in Angular or via database queries. For example, you
+  might have the database filter out all the todos belonging to a
+  single user, but let Angular filter by category, body, or status.
 - **Do at least some filtering on the database side of things.**
 
 ### Features to implement
@@ -83,15 +84,19 @@ where you replace the name ("Connie Stewart") and email
 person you're pairing with.
 
 - As you work, create a branch for a new feature.
-  - Write tests for the server actions for the feature you added (run in the server folder using `./gradlew test` or `./gradlew test jacocoTestReport` as described in [README.md](./README.md#testing-the-server)). Then write the server code that makes those tests pass.
-  - Write new end-to-end tests for the new views using Cypress. Run
-    these in client folder using `ng e2e --watch` as described in [README.md](./README.md#end-to-end-testing)).
-  - Write unit tests for the new Angular components you are adding using Karma (run in client folder using `ng test` or `ng test --code-coverage` as described in [README.md](./README.md#testing-the-client)). Then write the Angular code that makes those tests pass.
+  - Write tests for the server actions for the feature you added. Run
+    them to make sure they fail. Then write the server code that
+    makes those tests pass.
+  - Write new end-to-end tests for the new views
+    using Cypress. Run these to make sure they fail.
+  - Write unit tests for the new Angular components you are adding
+    using Karma. Run them to make sure they also fail. Then write the
+    Angular code that makes those unit and integration tests pass.
   - Address failing builds.
 - Perform code reviews especially if you're not pair programming.
   _Ask (your partner, the class, the instructor) about things you don't understand!_
-- Use pull requests or work together with your lab partner to
-  merge things into master when a feature is working
+- Use pull requests to
+  merge things into `main` when a feature is working
   and is tested (with passing tests and decent coverage).
 
 ## Writing todos to the Database
@@ -105,4 +110,4 @@ You should use Angular to display todos in attractive, readable, and useful ways
 - Use the Angular Material Design tools you've learned about to build a nice interface for
   accessing these APIs:
   - You must use at least two nifty Angular Material features from [here](https://material.angular.io/components/categories)!
-  - There are many interesting features and documentation about how to use them - we encourage you to try several
+  - There are many interesting tools - we encourage you to try several.

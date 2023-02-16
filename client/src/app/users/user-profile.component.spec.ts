@@ -12,7 +12,11 @@ import { UserService } from './user.service';
 describe('UserProfileComponent', () => {
   let component: UserProfileComponent;
   let fixture: ComponentFixture<UserProfileComponent>;
-  const activatedRoute: ActivatedRouteStub = new ActivatedRouteStub();
+  const activatedRoute: ActivatedRouteStub = new ActivatedRouteStub({
+    // Using the constructor here lets us try that branch in `activated-route-stub.ts`
+    // and then we can choose a new parameter map in the tests if we choose
+    id : 'chris_id'
+  });
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({

@@ -8,11 +8,26 @@
       "html"
     ],
     "cSpell.words": [
-        "Bson",
-        "CSCI",
-        "Javalin",
-        "sidenav",
-        "todos"
+      "Bson",
+      "compat",
+      "CSCI",
+      "dont",
+      "Ibmers",
+      "invalidemail",
+      "invalidrole",
+      "jacoco",
+      "Javalin",
+      "LABTASKS",
+      "Mockito",
+      "mongoseed",
+      "notanumber",
+      "OHMNET",
+      "sams",
+      "Servlet",
+      "sidenav",
+      "testid",
+      "todos",
+      "unsub"
     ],
     "angular.enable-experimental-ivy-prompt": false,
 }

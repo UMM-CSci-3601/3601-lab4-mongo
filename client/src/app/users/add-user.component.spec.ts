@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule, FormGroup, AbstractControl } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormGroup, AbstractControl } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,7 +13,7 @@ import { UserService } from './user.service';
 
 describe('AddUserComponent', () => {
   let addUserComponent: AddUserComponent;
-  let addUserForm: FormGroup;
+  let addUserForm: UntypedFormGroup;
   let fixture: ComponentFixture<AddUserComponent>;
 
   beforeEach(waitForAsync(() => {
@@ -150,9 +150,6 @@ describe('AddUserComponent', () => {
     it('should fail on ages that are too high', () => {
       ageControl.setValue(201);
       expect(ageControl.valid).toBeFalsy();
-      // I have no idea why I have to use a lower case 'l' here
-      // when it's an upper case 'L' in `Validators.maxLength(2)`.
-      // But I apparently do.
       expect(ageControl.hasError('max')).toBeTruthy();
     });
 
