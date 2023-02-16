@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { User, UserRole } from './user';
 import { UserService } from './user.service';
 
@@ -31,7 +31,8 @@ export class UserListComponent implements OnInit, OnDestroy  {
   public userRole: UserRole;
   public userCompany: string;
   public viewType: 'card' | 'list' = 'card';
-  getUsersSubscription: Subscription;
+
+  private ngUnsubscribe = new Subject<void>();
 
 
   /**
@@ -51,18 +52,16 @@ export class UserListComponent implements OnInit, OnDestroy  {
    * in the GUI.
    */
   getUsersFromServer(): void {
-    // Effectively ignore any previous unresolved calls to get the
-    // users from the service (i.e., from the server).
-    this.unsubscribeConditionally();
-    // A user-list-component has a getUsersSubscription (which is a subscription)
-    // that is paying attention to userService.getUsers (which is an Observable<User[]>)
+    // A user-list-component is paying attention to userService.getUsers
+    // (which is an Observable<User[]>)
     // (for more on Observable, see: https://reactivex.io/documentation/observable.html)
     // and we are specifically watching for role and age whenever the User[] gets updated
-    this.getUsersSubscription = this.userService.getUsers({
+    this.userService.getUsers({
       role: this.userRole,
       age: this.userAge
-    })
-    .subscribe({
+    }).pipe(
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe({
       // Next time we see a change in the Observable<User[]>,
       // refer to that User[] as returnedUsers here and do the steps in the {}
       next: (returnedUsers) => {
@@ -81,7 +80,7 @@ export class UserListComponent implements OnInit, OnDestroy  {
         console.error('We couldn\'t get the list of users; the server might be down');
       },
       // Once the observable has completed successfully
-      complete: () => console.log('Users were filtered on the server') //this WAS console.info, but that wasn't allowed here
+      // complete: () => console.log('Users were filtered on the server')
     });
   }
 
@@ -106,22 +105,9 @@ export class UserListComponent implements OnInit, OnDestroy  {
    * When this component is destroyed, we should unsubscribe to any
    * outstanding requests.
    */
-  ngOnDestroy(): void {
-    // When we destroy the user-list-component, unsubscribe from that Observable<User[]>
-    // This unsubscribing action allows the Observable to stop emitting events
-    // if we were the only ones paying attention
-    // (i.e., if all of the followers stop following, no need to tell us)
-    this.unsubscribeConditionally();
-  }
-
-  /**
-   * Unsubscribe to any outstanding requests if there are any
-   * since this component wont' be around to display the results.
-   */
-  unsubscribeConditionally(): void {
-    if (this.getUsersSubscription) {
-      this.getUsersSubscription.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
 }
