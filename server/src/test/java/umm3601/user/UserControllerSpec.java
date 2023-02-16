@@ -1,6 +1,5 @@
 package umm3601.user;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -240,7 +239,6 @@ public class UserControllerSpec {
 
   @Test
   public void getUsersByAge() throws JsonMappingException, JsonProcessingException {
-    Context ctx = mock(Context.class);
     // When the controller calls `ctx.queryParamMap`, return the expected map for an
     // "?age=37" query.
     when(ctx.queryParamMap()).thenReturn(Map.of(UserController.AGE_KEY, List.of("37")));
@@ -256,7 +254,7 @@ public class UserControllerSpec {
     userController.getUsers(ctx);
 
     // Verify that `getUsers` called `ctx.status(200)` at some point.
-    verify(ctx).status(200);
+    verify(ctx).status(HttpStatus.OK);
 
     // Verify that `ctx.json()` is called with a `List` of `User`s.
     // Each of those `User`s should have age 37.
