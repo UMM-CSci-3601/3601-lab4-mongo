@@ -73,7 +73,7 @@ Type `exit` or `^D` to exit out of the `mongo` shell tool.
 
 > :warning: For various reasons we're running a slightly
 older version of Mongo in the lab (v5, when the current version
-is v6). This generally won't affect, but there may be features that
+is v6). This generally won't affect things, but there may be features that
 v5 doesn't support. If you're trying something you found online
 and it doesn't seem to work as advertised, you might check and
 see if it's a v6 feature.
