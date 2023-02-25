@@ -238,22 +238,19 @@ public class UserControllerSpec {
   }
 
   @Test
-  public void getUsersByAge() throws JsonMappingException, JsonProcessingException {
+  void canGetUsersWithAge37Redux() throws JsonMappingException, JsonProcessingException {
     // When the controller calls `ctx.queryParamMap`, return the expected map for an
     // "?age=37" query.
     when(ctx.queryParamMap()).thenReturn(Map.of(UserController.AGE_KEY, List.of("37")));
     // When the controller calls `ctx.queryParamAsClass() to get the value associated with
-    // the "age" key, return an appropriate Validator. TBH, I never did figure out what the
-    // third argument to the Validator constructor was for, but `null` seems OK. I'm also not sure
-    // what the first argument is; it appears that you can set it to anything that isn't
-    // null and it's happy.
-    Validator<Integer> validator = new Validator<Integer>("age", 37, null);
+    // the "age" key, return an appropriate Validator.
+    Validator<Integer> validator = Validator.create(Integer.class, "37", UserController.AGE_KEY);
     when(ctx.queryParamAsClass(UserController.AGE_KEY, Integer.class)).thenReturn(validator);
 
     // Call the method under test.
     userController.getUsers(ctx);
 
-    // Verify that `getUsers` called `ctx.status(200)` at some point.
+    // Verify that `getUsers` included a call to `ctx.status(HttpStatus.OK)` at some point.
     verify(ctx).status(HttpStatus.OK);
 
     // Verify that `ctx.json()` is called with a `List` of `User`s.
