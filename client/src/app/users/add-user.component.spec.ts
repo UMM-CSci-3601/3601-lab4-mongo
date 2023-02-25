@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule, UntypedFormGroup, AbstractControl } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, AbstractControl } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,10 +13,11 @@ import { UserService } from './user.service';
 
 describe('AddUserComponent', () => {
   let addUserComponent: AddUserComponent;
-  let addUserForm: UntypedFormGroup;
+  let addUserForm: FormGroup;
   let fixture: ComponentFixture<AddUserComponent>;
 
   beforeEach(waitForAsync(() => {
+    TestBed.overrideProvider(UserService, { useValue: new MockUserService() });
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
@@ -30,7 +31,6 @@ describe('AddUserComponent', () => {
         RouterTestingModule
       ],
       declarations: [AddUserComponent],
-      providers: [{ provide: UserService, useValue: new MockUserService() }]
     }).compileComponents().catch(error => {
       expect(error).toBeNull();
     });
@@ -39,7 +39,6 @@ describe('AddUserComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AddUserComponent);
     addUserComponent = fixture.componentInstance;
-    addUserComponent.ngOnInit();
     fixture.detectChanges();
     addUserForm = addUserComponent.addUserForm;
     expect(addUserForm).toBeDefined();
@@ -150,6 +149,9 @@ describe('AddUserComponent', () => {
     it('should fail on ages that are too high', () => {
       ageControl.setValue(201);
       expect(ageControl.valid).toBeFalsy();
+      // I have no idea why I have to use a lower case 'l' here
+      // when it's an upper case 'L' in `Validators.maxLength(2)`.
+      // But I apparently do.
       expect(ageControl.hasError('max')).toBeTruthy();
     });
 
