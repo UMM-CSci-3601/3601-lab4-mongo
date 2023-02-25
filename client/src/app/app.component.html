@@ -5,21 +5,16 @@
 
       <!-- Side navigation links -->
 
-      <a mat-list-item routerLink="/"
-        routerLinkActive="drawer-list-item-active"
+      <a mat-list-item routerLink="/" routerLinkActive="drawer-list-item-active"
         #routerLinkActiveInstance="routerLinkActive"
-        [attr.tabindex]="routerLinkActiveInstance.isActive ? 0 : -1"
-        [routerLinkActiveOptions]="{exact: true}"
-        (click)="drawer.close()">
-        <mat-icon matListIcon>home</mat-icon>
+        [routerLinkActiveOptions]="{exact: true}" (click)="drawer.close()">
+        <mat-icon matListItemIcon>home</mat-icon>
         Home
       </a>
 
-      <a mat-list-item
-        routerLink="/users"
-        routerLinkActive="drawer-list-item-active"
-        (click)="drawer.close()">
-        <mat-icon matListIcon>people</mat-icon>
+      <a mat-list-item routerLink="/users" routerLinkActive="drawer-list-item-active"
+      (click)="drawer.close()">
+        <mat-icon matListItemIcon>people</mat-icon>
         Users
       </a>
 
@@ -29,8 +24,7 @@
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       <button type="button" aria-label="Toggle sidenav" mat-icon-button
-        (click)="drawer.toggle()" onclick="this.blur()"
-        class="sidenav-button">
+      (click)="drawer.toggle()" onclick="this.blur()" class="sidenav-button">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span class="app-title">{{title}}</span>
