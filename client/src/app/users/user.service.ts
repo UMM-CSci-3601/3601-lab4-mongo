@@ -9,10 +9,16 @@ import { map } from 'rxjs/operators';
  * Service that provides the interface for getting information
  * about `Users` from the server.
  */
-@Injectable()
+@Injectable({
+  providedIn: `root`
+})
 export class UserService {
   // The URL for the users part of the server API.
-  readonly userUrl: string = environment.apiUrl + 'users';
+  readonly userUrl: string = `${environment.apiUrl}users`;
+
+  private readonly roleKey = 'role';
+  private readonly ageKey = 'age';
+  private readonly companyKey = 'company';
 
   // The private `HttpClient` is *injected* into the service
   // by the Angular framework. This allows the system to create
@@ -41,20 +47,20 @@ export class UserService {
    *  from the server after a possibly substantial delay (because we're
    *  contacting a remote server over the Internet).
    */
-   getUsers(filters?: { role?: UserRole; age?: number; company?: string }): Observable<User[]> {
+  getUsers(filters?: { role?: UserRole; age?: number; company?: string }): Observable<User[]> {
     // `HttpParams` is essentially just a map used to hold key-value
     // pairs that are then encoded as "?key1=value1&key2=value2&…" in
     // the URL when we make the call to `.get()` below.
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.role) {
-        httpParams = httpParams.set('role', filters.role);
+        httpParams = httpParams.set(this.roleKey, filters.role);
       }
       if (filters.age) {
-        httpParams = httpParams.set('age', filters.age.toString());
+        httpParams = httpParams.set(this.ageKey, filters.age.toString());
       }
       if (filters.company) {
-        httpParams = httpParams.set('company', filters.company);
+        httpParams = httpParams.set(this.companyKey, filters.company);
       }
     }
     // Send the HTTP GET request with the given URL and parameters.
@@ -70,8 +76,9 @@ export class UserService {
    * @param id the ID of the desired user
    * @returns an `Observable` containing the resulting user.
    */
-   getUserById(id: string): Observable<User> {
-    return this.httpClient.get<User>(this.userUrl + '/' + id);
+  getUserById(id: string): Observable<User> {
+    // The input to get could also be written as (this.userUrl + '/' + id)
+    return this.httpClient.get<User>(`${this.userUrl}/${id}`);
   }
 
   /**
@@ -87,25 +94,25 @@ export class UserService {
    * @param filters the map of key-value pairs used for the filtering
    * @returns an array of `Users` matching the given filters
    */
-   filterUsers(users: User[], filters: { name?: string; company?: string }): User[] {
+  filterUsers(users: User[], filters: { name?: string; company?: string }): User[] { // skipcq: JS-0105
     let filteredUsers = users;
 
+    // Filter by name
     if (filters.name) {
       filters.name = filters.name.toLowerCase();
-
       filteredUsers = filteredUsers.filter(user => user.name.toLowerCase().indexOf(filters.name) !== -1);
     }
 
+    // Filter by company
     if (filters.company) {
       filters.company = filters.company.toLowerCase();
-
       filteredUsers = filteredUsers.filter(user => user.company.toLowerCase().indexOf(filters.company) !== -1);
     }
 
     return filteredUsers;
   }
 
-  addUser(newUser: User): Observable<string> {
+  addUser(newUser: Partial<User>): Observable<string> {
     // Send post request to add a new user with the user data as the body.
     return this.httpClient.post<{id: string}>(this.userUrl, newUser).pipe(map(res => res.id));
   }
