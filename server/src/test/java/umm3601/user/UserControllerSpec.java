@@ -219,6 +219,7 @@ class UserControllerSpec {
     }
   }
 
+  // We've included another approach for testing if everything behaves when we ask for users that are 37
   @Test
   void canGetUsersWithAge37Redux() throws JsonMappingException, JsonProcessingException {
     // When the controller calls `ctx.queryParamMap`, return the expected map for an
@@ -235,6 +236,7 @@ class UserControllerSpec {
     // Verify that `getUsers` included a call to `ctx.status(HttpStatus.OK)` at some point.
     verify(ctx).status(HttpStatus.OK);
 
+    // Instead of using the Captor like in many other tests, we will use an ArgumentMatcher
     // Verify that `ctx.json()` is called with a `List` of `User`s.
     // Each of those `User`s should have age 37.
     verify(ctx).json(argThat(new ArgumentMatcher<List<User>>() {
