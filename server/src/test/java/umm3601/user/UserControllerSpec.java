@@ -214,6 +214,9 @@ class UserControllerSpec {
     verify(ctx).json(userArrayListCaptor.capture());
     verify(ctx).status(HttpStatus.OK);
     assertEquals(2, userArrayListCaptor.getValue().size());
+    for (User user : userArrayListCaptor.getValue()) {
+      assertEquals(37, user.age);
+    }
   }
 
   @Test
@@ -235,6 +238,7 @@ class UserControllerSpec {
     // Verify that `ctx.json()` is called with a `List` of `User`s.
     // Each of those `User`s should have age 37.
     verify(ctx).json(argThat(new ArgumentMatcher<List<User>>() {
+      @Override
       public boolean matches(List<User> users) {
         for (User user : users) {
           assertEquals(37, user.age);
