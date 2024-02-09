@@ -18,10 +18,11 @@ const mongoDb = process.env.MONGO_DB || 'dev';
 const mongoUri = `mongodb://${mongoHost}/${mongoDb}`;
 const dbSeedDir = '../database/seed';
 
-const pluginConfig: Cypress.PluginConfig = (on, config) => {
+const pluginConfig: Cypress.PluginConfig = (on, _config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
   on('task', {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     'seed:database': (drop = true) => seedAll(mongoUri, dbSeedDir, drop),
   });
 
