@@ -1,21 +1,21 @@
 // Server side build.gradle
-// Builds the server side of the project
+// Builds and tests the server side of the project
 
 plugins {
   // Apply the application plugin to add support for building a CLI application
   id 'application'
 
-  // Apply the checkstyle plugin to check for appropriate Java code style.
-  id 'checkstyle'
-
   // Apply the Jacoco plugin to add suppport for JUnit test coverage reports.
   id 'jacoco'
+
+  // Apply the checkstyle plugin to check for appropriate Java code style.
+  id 'checkstyle'
 }
 
-// Build and run the project with Java 11
+// Build and run the project with Java 17
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
@@ -29,43 +29,35 @@ repositories {
 // External dependencies that our application utilizes
 dependencies {
   // Javalin, a simple web framework for Java
-  implementation 'io.javalin:javalin:5.3.2'
+  implementation 'io.javalin:javalin:5.6.3'
 
   // Mongo DB Driver for Java
-  implementation 'org.mongodb:mongodb-driver-sync:4.8.2'
-
-  // Jackson, a JSON library for Java
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+  implementation 'org.mongodb:mongodb-driver-sync:4.11.1'
 
   // MongoJack, MongoDB integration for Jackson
-  implementation 'org.mongojack:mongojack:4.8.0'
-
-  // Jackson support modules for Java 8 datatypes
-  implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.14.2'
-  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.2'
-  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
+  implementation 'org.mongojack:mongojack:4.8.1'
 
   // Simple Logging Facade for Java
-  implementation 'org.slf4j:slf4j-simple:2.0.6'
+  implementation 'org.slf4j:slf4j-simple:2.0.11'
 
   // JUnit Jupiter API for testing.
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
 
   // JUnit Jupiter Engine for testing.
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+
+  // JUnit Platform Launcher for testing.
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
   // Mockito for testing
-  testImplementation 'org.mockito:mockito-core:5.1.1'
+  testImplementation 'org.mockito:mockito-core:5.10.0'
 
-  testImplementation 'com.mockrunner:mockrunner-servlet:2.0.6'
-
-  // The Mockito Java mocking library
-  testImplementation "org.mockito:mockito-core:3.+"
+  testImplementation 'com.mockrunner:mockrunner-servlet:2.0.7'
 }
 
 application {
   // Define the main class for the application
-  mainClass = 'umm3601.Server'
+  mainClass = 'umm3601.Server' // 'umm3601.Main'
 }
 
 test {
@@ -74,10 +66,8 @@ test {
 
   // After running the tests, generate a coverage report
   finalizedBy jacocoTestReport
-}
-
-wrapper {
-  distributionType = Wrapper.DistributionType.ALL
+  // After running the tests, check the coverage level
+  finalizedBy jacocoTestCoverageVerification
 }
 
 jacocoTestReport {
@@ -88,16 +78,65 @@ jacocoTestReport {
     // This isn't strictly necessary, but the default reports
     // location is buried pretty deep in the build directory,
     // so this makes it easier to find.
-    html.destination file("${buildDir}/jacocoHtml")
+    html.outputLocation = file("${buildDir}/jacocoHtml")
   }
 
   afterEvaluate {
-    // This excludes the `Server` class from the coverage report. We don't
-    // have any good way to test the `Server` class directory (we'd have
+    // This excludes the `Main` class from the coverage report. We don't
+    // have any good way to test the `Main` class (we'd have
     // to somehow fake incoming HTTP requests), so we are just
     // leaving it out of the coverage report and the coverage limits.
     classDirectories.setFrom(files(classDirectories.files.collect {
-      fileTree(dir: it, exclude: 'umm3601/Server.class')
+      fileTree(dir: it, exclude: ['umm3601/Main.class', 'umm3601/Server.class'])
+    }))
+  }
+}
+
+jacocoTestCoverageVerification {
+  // Running the test verification task automatically runs test first
+  dependsOn test
+
+  // These are the rules applied to the test coverage
+  violationRules {
+    rule {
+      // We are looking at the entire bundle overall, i.e.,
+      // 80% of all instructions across all the Java files
+      // (except Main.java) need to be covered.
+      element = 'BUNDLE'
+
+      // 80% of instructions should be covered
+      limit {
+        counter = 'INSTRUCTION'
+        minimum = 0.8
+      }
+
+      // 80% of lines should be covered
+      limit {
+        counter = 'LINE'
+        minimum = 0.8
+      }
+
+      // 80% of branches should be covered
+      limit {
+        counter = 'BRANCH'
+        minimum = 0.8
+      }
+
+      // 80% of methods should be covered
+      limit {
+        counter = 'METHOD'
+        minimum = 0.8
+      }
+    }
+  }
+
+  // This excludes the `Main` class from coverage verification. We don't
+  // have any good way to test the `Main` class (we'd have
+  // to somehow fake incoming HTTP requests), so we are just
+  // leaving it out of the coverage report and the coverage limits.
+  afterEvaluate {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: ['umm3601/Main.class', 'umm3601/Server.class'])
     }))
   }
 }
@@ -105,4 +144,8 @@ jacocoTestReport {
 tasks.withType(JavaCompile) {
   // All of our source files are written in UTF-8
   options.encoding = 'UTF-8'
+}
+
+wrapper {
+  distributionType = Wrapper.DistributionType.ALL
 }
