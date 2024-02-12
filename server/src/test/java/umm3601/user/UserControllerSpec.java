@@ -1,5 +1,6 @@
 package umm3601.user;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,11 +40,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import io.javalin.validation.BodyValidator;
 import io.javalin.validation.ValidationException;
 import io.javalin.validation.Validator;
+import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -170,6 +174,24 @@ class UserControllerSpec {
     userDocuments.insertOne(sam);
 
     userController = new UserController(db);
+  }
+
+  /**
+   * Verify that we can successfully build a UserController
+   * and call it's `addRoutes` method. This doesn't verify
+   * much beyond that the code actually runs without throwing
+   * an exception. We do, however, confirm that the `addRoutes`
+   * causes `.get()` to be called at least twice.
+   */
+  @Test
+  public void canBuildController() throws IOException {
+    Javalin mockServer = Mockito.mock(Javalin.class);
+    userController.addRoutes(mockServer);
+
+    // Verify that calling `addRoutes()` above caused `get()` to be called
+    // on the server at least twice. We use `any()` to say we don't care about
+    // the arguments that were passed to `.get()`.
+    verify(mockServer, Mockito.atLeast(2)).get(any(), any());
   }
 
   @Test
@@ -334,7 +356,7 @@ class UserControllerSpec {
   }
 
   @Test
-  public void canGetUsersWithCompanyLowercase() throws IOException {
+  void canGetUsersWithCompanyLowercase() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put(UserController.COMPANY_KEY, Arrays.asList(new String[] {"ohm"}));
     when(ctx.queryParamMap()).thenReturn(queryParams);
@@ -425,13 +447,15 @@ class UserControllerSpec {
 
   @Test
   void addUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"Test User\","
-        + "\"age\": 25,"
-        + "\"company\": \"testers\","
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "Test User",
+          "age": 25,
+          "company": "testers",
+          "email": "test@example.com",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -457,13 +481,15 @@ class UserControllerSpec {
 
   @Test
   void addInvalidEmailUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"Test User\","
-        + "\"age\": 25,"
-        + "\"company\": \"testers\","
-        + "\"email\": \"invalidemail\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "Test User",
+          "age": 25,
+          "company": "testers",
+          "email": "invalidemail",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -478,13 +504,15 @@ class UserControllerSpec {
 
   @Test
   void addInvalidAgeUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"Test User\","
-        + "\"age\": \"notanumber\","
-        + "\"company\": \"testers\","
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "Test User",
+          "age": "notanumber",
+          "company": "testers",
+          "email": "test@example.com",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -495,13 +523,15 @@ class UserControllerSpec {
 
   @Test
   void add0AgeUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"Test User\","
-        + "\"age\": 0,"
-        + "\"company\": \"testers\","
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "Test User",
+          "age": 0,
+          "company": "testers",
+          "email": "test@example.com",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -512,13 +542,15 @@ class UserControllerSpec {
 
   @Test
   void add150AgeUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"Test User\","
-        + "\"age\": 150,"
-        + "\"company\": \"testers\","
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "Test User",
+          "age": 150,
+          "company": "testers",
+          "email": "test@example.com",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -529,12 +561,14 @@ class UserControllerSpec {
 
   @Test
   void addNullNameUser() throws IOException {
-    String testNewUser = "{"
-        + "\"age\": 25,"
-        + "\"company\": \"testers\","
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "age": 25,
+          "company": "testers",
+          "email": "test@example.com",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -545,13 +579,15 @@ class UserControllerSpec {
 
   @Test
   void addInvalidNameUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"\","
-        + "\"age\": 25,"
-        + "\"company\": \"testers\","
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "",
+          "age": 25,
+          "company": "testers",
+          "email": "test@example.com",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -562,13 +598,15 @@ class UserControllerSpec {
 
   @Test
   void addInvalidRoleUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"Test User\","
-        + "\"age\": 25,"
-        + "\"company\": \"testers\","
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"invalidrole\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "Test User",
+          "age": 25,
+          "company": "testers",
+          "email": "test@example.com",
+          "role": "invalidrole"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -579,12 +617,14 @@ class UserControllerSpec {
 
   @Test
   void addNullCompanyUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"Test User\","
-        + "\"age\": 25,"
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "Test User",
+          "age": 25,
+          "email": "test@example.com",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -595,13 +635,15 @@ class UserControllerSpec {
 
   @Test
   void addInvalidCompanyUser() throws IOException {
-    String testNewUser = "{"
-        + "\"name\": \"\","
-        + "\"age\": 25,"
-        + "\"company\": \"\","
-        + "\"email\": \"test@example.com\","
-        + "\"role\": \"viewer\""
-        + "}";
+    String testNewUser = """
+        {
+          "name": "",
+          "age": 25,
+          "company": "",
+          "email": "test@example.com",
+          "role": "viewer"
+        }
+        """;
     when(ctx.bodyValidator(User.class))
       .then(value -> new BodyValidator<User>(testNewUser, User.class, javalinJackson));
 
@@ -645,4 +687,65 @@ class UserControllerSpec {
     assertEquals(0, db.getCollection("users").countDocuments(eq("_id", new ObjectId(testID))));
   }
 
+  /**
+   * Test that the `generateAvatar` method works as expected.
+   *
+   * To test this code, we need to mock out the `md5()` method so we
+   * can control what it returns. This way we don't have to figure
+   * out what the actual md5 hash of a particular email address is.
+   *
+   * The use of `Mockito.spy()` essentially allows us to override
+   * the `md5()` method, while leaving the rest of the user controller
+   * "as is". This is a nice way to test a method that depends on
+   * an internal method that we don't want to test (`md5()` in this case).
+   *
+   * This code was suggested by GitHub CoPilot.
+   *
+   * @throws NoSuchAlgorithmException
+   */
+  @Test
+  void testGenerateAvatar() throws NoSuchAlgorithmException {
+    // Arrange
+    String email = "test@example.com";
+    UserController controller = Mockito.spy(userController);
+    when(controller.md5(email)).thenReturn("md5hash");
+
+    // Act
+    String avatar = controller.generateAvatar(email);
+
+    // Assert
+    assertEquals("https://gravatar.com/avatar/md5hash?d=identicon", avatar);
+  }
+
+  /**
+   * Test that the `generateAvatar` throws a `NoSuchAlgorithmException`
+   * if it can't find the `md5` hashing algortihm.
+   *
+   * To test this code, we need to mock out the `md5()` method so we
+   * can control what it returns. In particular, we want `.md5()` to
+   * throw a `NoSuchAlgorithmException`, which we can't do without
+   * mocking `.md5()` (since the algorithm does actually exist).
+   *
+   * The use of `Mockito.spy()` essentially allows us to override
+   * the `md5()` method, while leaving the rest of the user controller
+   * "as is". This is a nice way to test a method that depends on
+   * an internal method that we don't want to test (`md5()` in this case).
+   *
+   * This code was suggested by GitHub CoPilot.
+   *
+   * @throws NoSuchAlgorithmException
+   */
+  @Test
+  void testGenerateAvatarWithException() throws NoSuchAlgorithmException {
+    // Arrange
+    String email = "test@example.com";
+    UserController controller = Mockito.spy(userController);
+    when(controller.md5(email)).thenThrow(NoSuchAlgorithmException.class);
+
+    // Act
+    String avatar = controller.generateAvatar(email);
+
+    // Assert
+    assertEquals("https://gravatar.com/avatar/?d=mp", avatar);
+  }
 }

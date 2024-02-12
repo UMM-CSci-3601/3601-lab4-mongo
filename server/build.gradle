@@ -57,7 +57,7 @@ dependencies {
 
 application {
   // Define the main class for the application
-  mainClass = 'umm3601.Server' // 'umm3601.Main'
+  mainClass = 'umm3601.Main'
 }
 
 test {
