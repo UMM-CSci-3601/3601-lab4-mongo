@@ -3,6 +3,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, takeUntil } from 'rxjs';
 import { User, UserRole } from './user';
 import { UserService } from './user.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { MatListModule } from '@angular/material/list';
+import { UserCardComponent } from './user-card.component';
+
+import { MatRadioModule } from '@angular/material/radio';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
 
 /**
  * A component that displays a list of users, either as a grid
@@ -15,10 +29,12 @@ import { UserService } from './user.service';
  * makes the most sense to do the filtering.
  */
 @Component({
-  selector: 'app-user-list-component',
-  templateUrl: 'user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
-  providers: []
+    selector: 'app-user-list-component',
+    templateUrl: 'user-list.component.html',
+    styleUrls: ['./user-list.component.scss'],
+    providers: [],
+    standalone: true,
+    imports: [MatCardModule, MatFormFieldModule, MatInputModule, FormsModule, MatSelectModule, MatOptionModule, MatRadioModule, UserCardComponent, MatListModule, RouterLink, MatButtonModule, MatTooltipModule, MatIconModule]
 })
 
 export class UserListComponent implements OnInit, OnDestroy  {
@@ -32,6 +48,7 @@ export class UserListComponent implements OnInit, OnDestroy  {
   public userCompany: string;
   public viewType: 'card' | 'list' = 'card';
 
+  errMsg = '';
   private ngUnsubscribe = new Subject<void>();
 
 
@@ -72,14 +89,13 @@ export class UserListComponent implements OnInit, OnDestroy  {
       },
       // If we observe an error in that Observable, put that message in a snackbar so we can learn more
       error: (err) => {
-        let message = '';
         if (err.error instanceof ErrorEvent) {
-          message = `Problem in the client – Error: ${err.error.message}`;
+          this.errMsg = `Problem in the client – Error: ${err.error.message}`;
         } else {
-          message = `Problem contacting the server – Error Code: ${err.status}\nMessage: ${err.message}`;
+          this.errMsg = `Problem contacting the server – Error Code: ${err.status}\nMessage: ${err.message}`;
         }
         this.snackBar.open(
-          message,
+          this.errMsg,
           'OK',
           // The message will disappear after 6 seconds.
           { duration: 6000 });

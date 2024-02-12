@@ -61,6 +61,23 @@ describe('UserService', () => {
   });
 
   describe('When getUsers() is called with no parameters', () => {
+   /* We really don't care what `getUsers()` returns. Since all the
+    * filtering (when there is any) is happening on the server,
+    * `getUsers()` is really just a "pass through" that returns whatever it receives,
+    * without any "post processing" or manipulation. The test in this
+    * `describe` confirms that the HTTP request is properly formed
+    * and sent out in the world, but we don't _really_ care about
+    * what `getUsers()` returns as long as it's what the HTTP
+    * request returns.
+    *
+    * So in this test, we'll keep it simple and have
+    * the (mocked) HTTP request return the entire list `testUsers`
+    * even though in "real life" we would expect the server to
+    * return return a filtered subset of the users. Furthermore, we
+    * won't actually check what got returned (there won't be an `expect`
+    * about the returned value). Since we don't use the returned value in this test,
+    * It might also be fine to not bother making the mock return it.
+    */
     it('calls `api/users`', waitForAsync(() => {
       // Mock the `httpClient.get()` method, so that instead of making an HTTP request,
       // it just returns our test data.
@@ -72,12 +89,10 @@ describe('UserService', () => {
       // We have to `subscribe()` to the `Observable` returned by `getUsers()`.
       // The `users` argument in the function is the array of Users returned by
       // the call to `getUsers()`.
-      userService.getUsers().subscribe((users: User[]) => {
-        // The array of `User`s returned by `getUsers()` should be
-        // the array `testUsers`.
+      userService.getUsers().subscribe((users) => {
         expect(users)
-          .withContext('expected users')
-          .toEqual(testUsers);
+          .withContext('returns the test users')
+          .toBe(testUsers);
         // The mocked method (`httpClient.get()`) should have been called
         // exactly one time.
         expect(mockedMethod)
@@ -95,7 +110,8 @@ describe('UserService', () => {
 
   describe('When getUsers() is called with parameters, it correctly forms the HTTP request (Javalin/Server filtering)', () => {
     /*
-    * We really don't care what `getUsers()` returns in the cases
+    * As in the test of `getUsers()` that takes in no filters in the params,
+    * we really don't care what `getUsers()` returns in the cases
     * where the filtering is happening on the server. Since all the
     * filtering is happening on the server, `getUsers()` is really
     * just a "pass through" that returns whatever it receives, without
@@ -185,7 +201,22 @@ describe('UserService', () => {
     });
   });
 
-  describe('When getUserByID() is given an ID', () => {
+  describe('When getUserById() is given an ID', () => {
+   /* We really don't care what `getUserById()` returns. Since all the
+    * interesting work is happening on the server, `getUserById()`
+    * is really just a "pass through" that returns whatever it receives,
+    * without any "post processing" or manipulation. The test in this
+    * `describe` confirms that the HTTP request is properly formed
+    * and sent out in the world, but we don't _really_ care about
+    * what `getUserById()` returns as long as it's what the HTTP
+    * request returns.
+    *
+    * So in this test, we'll keep it simple and have
+    * the (mocked) HTTP request return the `targetUser`
+    * Furthermore, we won't actually check what got returned (there won't be an `expect`
+    * about the returned value). Since we don't use the returned value in this test,
+    * It might also be fine to not bother making the mock return it.
+    */
     it('calls api/users/id with the correct ID', waitForAsync(() => {
       // We're just picking a User "at random" from our little
       // set of Users up at the top.
@@ -193,7 +224,7 @@ describe('UserService', () => {
       const targetId: string = targetUser._id;
 
       // Mock the `httpClient.get()` method so that instead of making an HTTP request
-      // it just returns our test data
+      // it just returns one user from our test data
       const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(targetUser));
 
       // Call `userService.getUser()` and confirm that the correct call has
@@ -202,15 +233,10 @@ describe('UserService', () => {
       // We have to `subscribe()` to the `Observable` returned by `getUserById()`.
       // The `user` argument in the function below is the thing of type User returned by
       // the call to `getUserById()`.
-      userService.getUserById(targetId).subscribe((user: User) => {
-        // The `User` returned by `getUserById()` should be targetUser.
-        // This `expect` doesn't do a _whole_ lot.
-        // This really just confirms that `getUserById()`
-        // doesn't in some way modify the user it
-        // gets back from the server.
-        expect(user)
-          .withContext('expected user')
-          .toBe(targetUser);
+      userService.getUserById(targetId).subscribe((user) => {
+        expect(user).withContext('returns the target user').toBe(targetUser);
+        // The `User` returned by `getUserById()` should be targetUser, but
+        // we don't bother with an `expect` here since we don't care what was returned.
         expect(mockedMethod)
           .withContext('one call')
           .toHaveBeenCalledTimes(1);
@@ -275,15 +301,17 @@ describe('UserService', () => {
 
   describe('Adding a user using `addUser()`', () => {
     it('talks to the right endpoint and is called once', waitForAsync(() => {
-      // Mock the `httpClient.addUser()` method, so that instead of making an HTTP request,
-      // it just returns our test data.
-      const USER_ID = 'pat_id';
-      const mockedMethod = spyOn(httpClient, 'post').and.returnValue(of(USER_ID));
+      const user_id = 'pat_id';
+      const expected_http_response = { id: user_id } ;
 
-      // paying attention to what is returned (undefined) didn't work well here,
-      // but I'm putting something in here to remind us to look into that
-      userService.addUser(testUsers[1]).subscribe((returnedString) => {
-        console.log(`The thing returned was: ${returnedString}`);
+      // Mock the `httpClient.addUser()` method, so that instead of making an HTTP request,
+      // it just returns our expected HTTP response.
+      const mockedMethod = spyOn(httpClient, 'post')
+        .and
+        .returnValue(of(expected_http_response));
+
+      userService.addUser(testUsers[1]).subscribe((new_user_id) => {
+        expect(new_user_id).toBe(user_id);
         expect(mockedMethod)
           .withContext('one call')
           .toHaveBeenCalledTimes(1);
