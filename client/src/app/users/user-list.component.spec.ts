@@ -48,12 +48,11 @@ describe('User list', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [COMMON_IMPORTS],
-      declarations: [UserListComponent, UserCardComponent],
-      // providers:    [ UserService ]  // NO! Don't provide the real service!
-      // Provide a test-double instead
-      providers: [{ provide: UserService, useValue: new MockUserService() }]
-    });
+    imports: [COMMON_IMPORTS, UserListComponent, UserCardComponent],
+    // providers:    [ UserService ]  // NO! Don't provide the real service!
+    // Provide a test-double instead
+    providers: [{ provide: UserService, useValue: new MockUserService() }]
+});
   });
 
   // This constructs the `userList` (declared
@@ -112,7 +111,6 @@ describe('Misbehaving User List', () => {
 
   let userServiceStub: {
     getUsers: () => Observable<User[]>;
-    getUsersFiltered: () => Observable<User[]>;
   };
 
   beforeEach(() => {
@@ -121,18 +119,14 @@ describe('Misbehaving User List', () => {
       getUsers: () => new Observable(observer => {
         observer.error('getUsers() Observer generates an error');
       }),
-      getUsersFiltered: () => new Observable(observer => {
-        observer.error('getUsersFiltered() Observer generates an error');
-      })
     };
 
     TestBed.configureTestingModule({
-      imports: [COMMON_IMPORTS],
-      declarations: [UserListComponent],
-      // providers:    [ UserService ]  // NO! Don't provide the real service!
-      // Provide a test-double instead
-      providers: [{ provide: UserService, useValue: userServiceStub }]
-    });
+    imports: [COMMON_IMPORTS, UserListComponent],
+    // providers:    [ UserService ]  // NO! Don't provide the real service!
+    // Provide a test-double instead
+    providers: [{ provide: UserService, useValue: userServiceStub }]
+});
   });
 
   // Construct the `userList` used for the testing in the `it` statement
@@ -146,10 +140,23 @@ describe('Misbehaving User List', () => {
   }));
 
   it('generates an error if we don\'t set up a UserListService', () => {
+    const mockedMethod = spyOn(userList, 'getUsersFromServer').and.callThrough();
     // Since calling either getUsers() or getUsersFiltered() return
     // Observables that then throw exceptions, we don't expect the component
     // to be able to get a list of users, and serverFilteredUsers should
     // be undefined.
-    expect(userList.serverFilteredUsers).toBeUndefined();
+    expect(userList.serverFilteredUsers)
+      .withContext('service can\'t give values to the list if it\'s not there')
+      .toBeUndefined();
+    expect(userList.getUsersFromServer)
+      .withContext('will generate the right error if we try to getUsersFromServer')
+      .toThrow();
+    expect(mockedMethod)
+      .withContext('will be called')
+      .toHaveBeenCalled();
+    expect(userList.errMsg)
+      .withContext('the error message will be')
+      .toContain('Problem contacting the server – Error Code:');
+      console.log(userList.errMsg);
   });
 });

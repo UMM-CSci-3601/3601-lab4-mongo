@@ -1,14 +1,23 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserRole } from './user';
 import { UserService } from './user.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-add-user',
-  templateUrl: './add-user.component.html',
-  styleUrls: ['./add-user.component.scss']
+    selector: 'app-add-user',
+    templateUrl: './add-user.component.html',
+    styleUrls: ['./add-user.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule]
 })
 export class AddUserComponent {
 
@@ -88,7 +97,10 @@ export class AddUserComponent {
     ]
   };
 
-  constructor(private userService: UserService, private snackBar: MatSnackBar, private router: Router) {
+  constructor(
+    private userService: UserService,
+    private snackBar: MatSnackBar,
+    private router: Router) {
   }
 
   formControlHasError(controlName: string): boolean {
@@ -122,7 +134,6 @@ export class AddUserComponent {
           { duration: 5000 }
         );
       },
-      // complete: () => console.log('Add user completes!')
     });
   }
 
