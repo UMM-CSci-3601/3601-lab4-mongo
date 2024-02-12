@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -138,6 +139,31 @@ public class UserController implements Controller {
     Bson combinedFilter = filters.isEmpty() ? new Document() : and(filters);
 
     return combinedFilter;
+  }
+
+  public void getUsersGroupedByCompany(Context ctx) {
+    Bson combinedFilter = constructFilter(ctx);
+
+    ArrayList<UserGroupResult> matchingUsers = userCollection
+      .aggregate(
+        List.of(
+          new Document("$match", combinedFilter),
+          // Group the users by their company, and count the number of users in each company
+          // new Document("$group", new Document("_id", "$company").append("count", new Document("$sum", 1)))
+          // new Document("$group", new Document("_id", "$company")
+          //   .append("count", new Document("$sum", 1))
+          //   .append("userIds", new Document("$addToSet", "$_id")))
+          new Document("$project", new Document("_id", 1).append("name", 1).append("company", 1)),
+          new Document("$group", new Document("_id", "$company")
+            .append("count", new Document("$sum", 1))
+            .append("users", new Document("$push", new Document("_id", "$_id").append("name", "$name"))))
+        ),
+        UserGroupResult.class
+      )
+      .into(new ArrayList<>());
+
+    ctx.json(matchingUsers);
+    ctx.status(HttpStatus.OK);
   }
 
   private Bson constructSortingOrder(Context ctx) {
@@ -275,6 +301,9 @@ public class UserController implements Controller {
   public void addRoutes(Javalin server) {
     // List users, filtered using query parameters
     server.get(API_USERS, this::getUsers);
+
+    // Get users, possibly filtered, grouped by company
+    server.get("/api/usersByCompany", this::getUsersGroupedByCompany);
 
     // Get the specified user
     server.get(API_USER_BY_ID, this::getUser);
