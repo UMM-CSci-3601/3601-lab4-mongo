@@ -22,7 +22,7 @@
 This is your starter code for Lab 4. The main goal here, as
 described in [LABTASKS](./LABTASKS.md), is to update the server
 code to actually use the MongoDB database instead of using the fixed
-set of users and todos in Labs 2 and 3.
+set of users and todos we used in Labs 2 and 3.
 You'll also add functionality to do things
 like adding new todos; this will require making changes all the
 way through from the Angular client, through the Java(lin) server,
@@ -31,13 +31,15 @@ to the database.
 ## Setup
 
 As in the previous labs, you'll be using VS Code and GitKraken. Once you've all joined your
-group using GitHub classroom, you can clone your repository using the command line or GitKraken:
+group using GitHub classroom, you can clone your repository using your tools of choice.
 
-1. From the file menu, choose **Clone Repo**
-2. Choose GitHub.com in the middle column (as the source location of your repo)
-3. Browse to the location you'd like to put the local copy of this project repo
-4. Select the correct repo from the list of repositories
-5. Select **Clone the repo!**
+As a reminder, **here are the steps needed to _run_ the project**:
+
+1. Go into the `database` directory and enter `./mongoseed.sh` to run the script that will seed the database.
+2. Go into the `server` directory and enter `./gradlew run` to run your server.
+3. In a _different_ terminal, go into the `client` directory and enter `ng serve` to make the client available.
+4. You can then go to [`localhost:4200`](http://localhost:4200) in your favorite web browser and see
+   your nifty Angular app.
 
 ### Make sure you have Mongo running on your (lab) computer
 
@@ -67,12 +69,12 @@ MongoDB server version: 5.0.14
 
 Type `exit` or `^D` to exit out of the `mongo` shell tool.
 
-> :warning: For various reasons we're running a slightly
+> :warning: For various reasons we're running an
 older version of Mongo in the lab (v5, when the current version
-is v6). This generally won't affect things, but there may be features that
+is v7). This generally won't affect things, but there may be features that
 v5 doesn't support. If you're trying something you found online
 and it doesn't seem to work as advertised, you might check and
-see if it's a v6 feature.
+see if it's a v7 feature.
 >
 > When looking things up in the MongoDB docs, it's probably wise
 to use [the v5.0 documentation](https://www.mongodb.com/docs/v5.0/).
@@ -111,24 +113,17 @@ state, so be prepared for that.
 
 ## Running your project
 
-- The **run** Gradle task (`./gradlew run` in the `server` directory) will still run your Javalin server, which is available at [`localhost:4567`](http://localhost:4567).
-- The **build** task will _build_ the server (including running
-  Checkstyle and the tests), but not run it.
+The **run** Gradle task (`./gradlew run` in the `server` directory) will still run your Javalin
+server, which is available at [`localhost:4567`](http://localhost:4567). The **build** task
+will _build_ the server (including running Checkstyle and the tests), but not run it.
 
 Once you have successfully run `npm install`, in order to serve up the _client side_ of your project, you will run
 `ng serve` (from the `client` directory as well). The client will be available by default at [`localhost:4200`](http://localhost:4200). If your server is running, you will be able to see data for users if you navigate to the right place in the project.
 
-The major difference between this lab and lab #3 is that, here, your data (users and todos) will be stored in a database rather than as "flat" JSON files within the server source code.
+The major difference between this lab and the previous labs is that, here, your data (users and todos) will be stored in a database rather than as "flat" JSON files within the server source code.
 
-For the most part, you will be using a local installation of Mongo as a dev (development) database. You don't really need to worry about how this is set up, but you do need to know a couple of tricks to help you use it:
-
-To recap, **here are the steps needed to _run_ the project**:
-
-1. Go into the `database` directory and enter `./mongoseed.sh` to run the script that will seed the database.
-2. Go into the `server` directory and enter `./gradlew run` to run your server.
-3. In a _different_ terminal, go into the `client` directory and enter `ng serve` to make the client available.
-4. You can then go to [`localhost:4200`](http://localhost:4200) in your favorite web browser and see
-   your nifty Angular app.
+For the most part, you will be using a local installation of Mongo as a `dev` (development) database. You don't really need to worry about how this is set up, but you do need to know a couple of tricks to help you use it
+effectively.
 
 ### MongoDB in VS Code
 
@@ -156,6 +151,11 @@ You will then have the MongoDB server in the sidebar.
 You can explore the databases and collections here. You can click a record to view and edit it.
 
 ![Screenshot of displaying the users in the sample MongoDB database in VS Code](https://user-images.githubusercontent.com/1300395/109005447-91882c00-766f-11eb-994e-9a326deee21b.png)
+
+You can also create a MongoDB _Playground_ in VSCode, which allows you to experiment with
+queries in a more interactive way than is possible when you're working with your Java code.
+Once you have a query working the way you want it, you can then export the query in different
+programming languages, include Java.
 
 ## Testing and Continuous Integration
 
@@ -190,6 +190,9 @@ From the `server` directory:
   - It generates a report you can find in `server/build/reports/tests/test/index.html`.
 - `./gradlew test jacocoTestReport` runs the server tests once and creates a coverage report
   - It generates a coverage report you can find in `server/build/jacocoHtml/index.html` in addition to the regular report generated by the `test` task.
+- `.gradlew check` runs the tests and the Checkstyle checks
+  - This is useful to avoid having annoying build fails on GitHub because Checkstyle didn't like
+    your layout somewhere.
 
 ### End to end testing
 
@@ -200,9 +203,13 @@ We use [Cypress](https://www.cypress.io/) for our end-to-end tests. There are a 
 
 - `ng e2e` both builds and serves the client and runs through all the Cypress end-to-end tests once.
 - `ng e2e --watch` builds and serves the client but just opens Cypress for you to be able to run the tests you want without closing automatically.
-  - This is the same as running `ng serve` and `npm run cy:open` (or `npx cypress open`) at the same time. If you are already running `ng serve` it will be easier to do this rather than closing it and running `ng e2e`.
+  - This is the same as running `ng serve` and `npm run cy:open` (or `npx cypress open`) at the
+    same time. If you are already running `ng serve` it will be easier to run `npx cypress open`
+    rather than closing your `ng serve`, running `ng e2e`, and restarting `ng serve`.
 
-The main page of Cypress looks like this:
+:warning: The Cypress screenshots below are a little out of date, but you should get the idea.
+
+The main page of Cypress looks something like this:
 
 ![image](https://user-images.githubusercontent.com/1300395/109009410-22f99d00-7674-11eb-9469-dd6a09710813.png)
 
@@ -218,9 +225,7 @@ There are three GitHub Actions workflows set up in your repo:
 
 - [Server Java](../../actions/workflows/server.yml) - JUnit tests for the server (`gradle-build`)
 - [Client Angular](../../actions/workflows/client.yaml) - Karma tests (`ng-test`) and ESLint linting (`ng-lint`) for the client
-- [End to End](../../actions/workflows/e2e.yaml) - Cypress tests for end-to-end testing
-
-There are badges above that show the status of these checks on the master branch.
+- [End to End](../../actions/workflows/e2e.yaml) - Cypress tests for end-to-end testing (`ng-e2e`)
 
 ## Resources
 
