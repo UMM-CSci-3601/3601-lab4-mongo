@@ -29,7 +29,8 @@
       "sortorder",
       "testid",
       "todos",
-      "unsub"
+      "unsub",
+      "VINCH"
     ],
     "angular.enable-experimental-ivy-prompt": false,
 }
