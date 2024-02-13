@@ -198,8 +198,6 @@ public class UserController implements Controller {
       sortBy = "_id";
     }
     String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortOrder"), "asc");
-    System.err.println("sortBy: " + sortBy);
-    System.err.println("sortOrder: " + sortOrder);
     Bson sortingOrder = sortOrder.equals("desc") ?  Sorts.descending(sortBy) : Sorts.ascending(sortBy);
 
     // The `UserByCompany` class is a simple class that has fields for the company
