@@ -194,6 +194,10 @@ From the `server` directory:
   - This is useful to avoid having annoying build fails on GitHub because Checkstyle didn't like
     your layout somewhere.
 
+You might find it useful to be able to generate HTTP requests "by hand" and see what the output
+is. The Thunderclient GitHub extension can be quite useful here; see [THUNDER_CLIENT.md](./THUNDER_CLIENT.md)
+for more details and examples.
+
 ### End to end testing
 
 End to end (E2E) testing involves the whole software stack rather than one part of it. Our E2E tests look at the behavior of both the client,
