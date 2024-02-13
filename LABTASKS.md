@@ -10,8 +10,8 @@
 
 ## Getting started
 
-- Remember to set up GitHub Projects with your stories and estimates
-- Turn in the URL of the GitHub repository for your group in Canvas. This will make it easier for us to figure out which team is "Snoozing Llamas".
+- [ ] Remember to set up your project on GitHub Projects with your stories and estimates
+- [ ] Turn in the URL of the GitHub repository for your group in Canvas. This will make it easier for us to figure out which team is "Snoozing Llamas".
 
 Definitely ask if you're ever confused about what you need to do for a given task.
 
@@ -19,20 +19,20 @@ Definitely ask if you're ever confused about what you need to do for a given tas
 
 The structure of this project should be nearly identical to that of Lab 3, and as such there really isn't much excitement in that department.
 
-The server is, for the most part, the same as it has been in the past two labs. The difference to look for here is in how the server gets the data it sends out in reply to requests.
+The structure of the server is, for the most part, the same as it has been in the past two labs. The difference to look for here is in how the server gets the data it sends out in reply to requests.
 
 Spend some time looking over the project with these questions in mind. (Unlike the previous labs, however, you do _not_ need to write up and turn in your answers to these questions.)
 
-1. What do we do in the `Server` and `UserController` constructors
-   to set up our connection to the development database?
-1. How do we retrieve a user by ID in the `UserController.getUser(String)` method?
-1. How do we retrieve all the users with a given age
-   in `UserController.getUsers(Context...)`? What's the role of
-   the variable `filters` in that method?
-1. What is happening in the `UserControllerSpec.setUpEach()` method?
-1. What's being tested in `UserControllerSpec.canGetUsersWithAge37()`?
-   How is that test implemented?
-1. Follow the process for adding a new user. What role does `UserController` play in the process?
+- [ ] What do we do in the `Main`, `Server` and `UserController` classes
+- [ ] to set up our connection to the development database?
+- [ ] How do we retrieve a user by ID in the `UserController.getUser(Context...)` method?
+- [ ] How do we retrieve all the users with a given age
+- [ ] in `UserController.getUsers(Context...)`? What's the role of
+- [ ] the variables `combinedFilter` and `sortingOrder` in that method?
+- [ ] What is happening in the `UserControllerSpec.setUpEach()` method?
+- [ ] What's being tested in `UserControllerSpec.canGetUsersWithAge37()`?
+- [ ] How is that test implemented?
+- [ ] Follow the process for adding a new user. What role does `UserController` play in the process?
 
 ## Overview of the lab
 
@@ -45,23 +45,23 @@ Spend some time looking over the project with these questions in mind. (Unlike t
 
 ### Features to implement
 
-- Filter todos by status
-- Filter todos by owner
-- Filter todos by contents of the body
-- Filter todos by category
-- Combinations of filters
-- Sort by a todo field (status, owner, body contents, or category)
-- Limit the number of todos returned
-- Ability to add new todos. This requires:
-  - An Angular form/page that allows the user to enter the information for a new todo with reasonable controls and validation.
-  - A new endpoint on the server that allows clients to add new todos.
-  - Logic in the server to add that new todo to the database and return the new ID.
-- Testing of all of the above.
-- Display the todos in a reasonable way using at least two nifty Angular Material features from [here](https://material.angular.io/components/categories)!
+- [ ] Filter todos by status
+- [ ] Filter todos by owner
+- [ ] Filter todos by contents of the body
+- [ ] Filter todos by category
+- [ ] Combinations of filters
+- [ ] Sort by a todo field (status, owner, body contents, or category)
+- [ ] Limit the number of todos returned
+- [ ] Ability to add new todos. This requires:
+  - [ ] An Angular form/page that allows the user to enter the information for a new todo with reasonable controls and validation.
+  - [ ] A new endpoint on the server that allows clients to add new todos.
+  - [ ] Logic in the server to add that new todo to the database and return the new ID.
+- [ ] Testing of all of the above.
+- [ ] Display the todos in a reasonable way using at least two nifty Angular Material features from [here](https://material.angular.io/components/categories)!
 
 ## Workflow and Continuous Integration
 
-You should organize your work into features, where each feature is an (small) epic or a single story in GitHub Projects. Each feature should "slice the cake", including server implementation and testing, Angular implementation and testing, and end-to-end testing.
+You should organize your work into features, where each feature is a (small) story in GitHub Projects. Each feature should "slice the cake", including server implementation and testing, Angular implementation and testing, and end-to-end testing.
 
 :warning: Keep the features as small and focussed as
 possible. Otherwise things like code reviews become a huge burden,
@@ -83,7 +83,7 @@ where you replace the name ("Connie Stewart") and email
 ("conniestewart@ohmnet.com") with the name and email of the
 person you're pairing with.
 
-- As you work, create a branch for a new feature.
+- [ ] As you work, create a branch for each new feature.
   - Write tests for the server actions for the feature you added. Run
     them to make sure they fail. Then write the server code that
     makes those tests pass.
@@ -93,21 +93,26 @@ person you're pairing with.
     using Karma. Run them to make sure they also fail. Then write the
     Angular code that makes those unit and integration/e2e tests pass.
   - Address failing builds.
-- Perform code reviews especially if you're not pair programming.
+- [ ] Perform code reviews, especially if you're not pair programming.
   _Ask (your partner, the class, the instructor) about things you don't understand!_
-- Use pull requests to
+- [ ] Use pull requests to
   merge things into `main` when a feature is working
   and is tested (with passing tests and decent coverage).
 
 ## Writing todos to the Database
 
-- We have included an example of writing to the database with `addUser` functionality. Add to both the front-end and back-end to make it possible to add todos so that they appear both in your list and in the database.
+- We have included an example of writing to the database with `addUser` functionality. Add
+  functionality to both the front-end and back-end to make it possible to add todos so that
+  they appear both in your list and in the database.
 
 ## Display todos
 
 You should use Angular to display todos in attractive, readable, and useful ways that are helpful for understanding the nature of a todo.
 
-- Use the Angular Material Design tools you've learned about to build a nice interface for
+- [ ] Use the Angular Material Design tools you've learned about to build a nice interface for
   accessing these APIs:
-  - You must use at least two nifty Angular Material features from [here](https://material.angular.io/components/categories)!
+  - [ ] You must use at least two nifty Angular Material features from [here](https://material.angular.io/components/categories)!
   - There are many interesting tools - we encourage you to try several.
+  - Feel free to borrow ideas and (preferably small bits of) code from the previous labs, but make
+    sure you understand it. Also feel free to use this as an opportunity to improve the UI, perhaps
+    taking advantages of ideas you had earlier but weren't able to implement then.
