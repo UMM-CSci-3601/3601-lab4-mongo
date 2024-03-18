@@ -103,7 +103,9 @@ Before you start working you will need to install the dependencies for the clien
 
 ### Seeding the Database
 
-To give yourself some data to work with instead of starting with an empty database in our development environment, you need to 'seed' the database with some starter data. Seed data and the seed script are stored in the top level directory `database`. To seed the database, move into that directory and run `./mongoseed.sh`. This will take each of the JSON files in `database/seed/` and insert their elements into the `dev` database.
+To give yourself some data to work with instead of starting with an empty database in our development environment, you need to 'seed' the database with some starter data. Seed data and the seed script are stored in the top level directory `database`. To seed the database, move into that directory and run `./mongoseed.sh` (on Mac/Linux) or `./mongoseed.bat` (on Windows). This will take each of the JSON files in `database/seed/` and insert their elements into the `dev` database.
+
+:warning: Shell scripts (.sh) will not run on Windows machines, and Batch scripts (.bat) will not run on Unix-like machines. Be sure that you are running the correct script for your operating system.
 
 These scripts also drop the database before seeding it so it is clean. You should run this after first cloning the project and again anytime you want to reset the database or you add new seed data to the `database/seed/` directory.
 
