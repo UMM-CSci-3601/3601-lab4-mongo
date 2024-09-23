@@ -8,7 +8,7 @@ jobs:
 
     services:
       mongo:
-        image: mongo:4.2
+        image: mongo:7.0
         ports:
           - '27017-27019:27017-27019'
 
@@ -27,10 +27,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name: Use Node.js 18
+    - name: Use Node.js 22
       uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 22
         cache: 'npm'
         cache-dependency-path: ./client/package-lock.json
 

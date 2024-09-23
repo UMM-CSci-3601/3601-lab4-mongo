@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, fakeAsync, flush, tick, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -15,6 +15,7 @@ import { MockUserService } from 'src/testing/user.service.mock';
 import { AddUserComponent } from './add-user.component';
 import { UserProfileComponent } from './user-profile.component';
 import { UserService } from './user.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('AddUserComponent', () => {
   let addUserComponent: AddUserComponent;
@@ -275,8 +276,7 @@ describe('AddUserComponent#submitForm()', () => {
   beforeEach(() => {
     TestBed.overrideProvider(UserService, { useValue: new MockUserService() });
     TestBed.configureTestingModule({
-    imports: [
-        ReactiveFormsModule,
+    imports: [ReactiveFormsModule,
         MatSnackBarModule,
         MatCardModule,
         MatSelectModule,
@@ -285,9 +285,8 @@ describe('AddUserComponent#submitForm()', () => {
         RouterTestingModule.withRoutes([
             { path: 'users/1', component: UserProfileComponent }
         ]),
-        HttpClientTestingModule,
-        AddUserComponent, UserProfileComponent
-    ],
+        AddUserComponent, UserProfileComponent],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
 }).compileComponents().catch(error => {
       expect(error).toBeNull();
     });
