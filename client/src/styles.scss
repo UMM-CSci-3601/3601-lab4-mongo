@@ -11,7 +11,7 @@
 // This is to be able to theme parts of the app dynamically depending on theme (right now: light or dark)
 // You can put styles in this mixin and the theme variables will refer to the actual theme being used (light or dark)
 @mixin app-theming($theme) {
-  $color-config: mat.get-color-config($theme);
+  $color-config: mat.m2-get-color-config($theme);
 
   // Extract the palettes you need from the theme definition.
   $primary: map-get($color-config, primary);
@@ -27,21 +27,21 @@
 
   @if $is-dark {
     .mat-toolbar.mat-primary {
-      background: mat.get-color-from-palette($background, app-bar);
-      color: mat.get-color-from-palette($foreground, text);
+      background: mat.m2-get-color-from-palette($background, app-bar);
+      color: mat.m2-get-color-from-palette($foreground, text);
     }
   }
   .drawer-list-item-active {
-    background-color: change-color(mat.get-color-from-palette($primary), $alpha: 0.15) !important;
-    color: mat.get-color-from-palette($primary) !important;
+    background-color: change-color(mat.m2-get-color-from-palette($primary), $alpha: 0.15) !important;
+    color: mat.m2-get-color-from-palette($primary) !important;
     .mat-mdc-list-item-icon {
-      color: mat.get-color-from-palette($primary) !important;
+      color: mat.m2-get-color-from-palette($primary) !important;
     }
   }
 
   .sidenav-list {
     .mat-mdc-list-item-icon {
-      color: mat.get-color-from-palette($foreground, icon);
+      color: mat.m2-get-color-from-palette($foreground, icon);
       margin-right: 16px;
     }
   }
@@ -51,25 +51,25 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 
-$light-primary: mat.define-palette(mat.$indigo-palette, 500); // 500 is the base hue of a Material color
+$light-primary: mat.m2-define-palette(mat.$m2-indigo-palette, 500); // 500 is the base hue of a Material color
 
 // The 200 here makes the indigo color lighter
 // Material Design dark themes should use a desaturated versions of primary and accent colors
 // See: https://material.io/design/color/dark-theme.html
-$dark-primary: mat.define-palette(mat.$indigo-palette, 200);
+$dark-primary: mat.m2-define-palette(mat.$m2-indigo-palette, 200);
 
-$light-accent: mat.define-palette(mat.$pink-palette, A200);
-$dark-accent: mat.define-palette(mat.$pink-palette, A100);
+$light-accent: mat.m2-define-palette(mat.$m2-pink-palette, A200);
+$dark-accent: mat.m2-define-palette(mat.$m2-pink-palette, A100);
 
 // The warn palette is optional (defaults to red).
-$light-warn: mat.define-palette(mat.$red-palette); // Without a hue given, it defaults to 500
-$dark-warn: mat.define-palette(mat.$red-palette, 300);
+$light-warn: mat.m2-define-palette(mat.$m2-red-palette); // Without a hue given, it defaults to 500
+$dark-warn: mat.m2-define-palette(mat.$m2-red-palette, 300);
 
-$typography-config: mat.define-typography-config();
+$typography-config: mat.m2-define-typography-config();
 
 // Create the theme object for a light theme
 // We include typography and density information here because it is the default theme
-$light-theme: mat.define-light-theme((
+$light-theme: mat.m2-define-light-theme((
   color: (
     primary: $light-primary,
     accent: $light-accent,
@@ -81,7 +81,7 @@ $light-theme: mat.define-light-theme((
 
 // Create the theme object for a dark theme
 // No typography and density needed because this theme will be on top of the default light theme
-$dark-theme: mat.define-dark-theme((
+$dark-theme: mat.m2-define-dark-theme((
   color: (
     primary: $dark-primary,
     accent: $dark-accent,
