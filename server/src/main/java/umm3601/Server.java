@@ -10,7 +10,6 @@ import com.mongodb.client.MongoClients;
 import org.bson.UuidRepresentation;
 
 import io.javalin.Javalin;
-import io.javalin.plugin.bundled.RouteOverviewPlugin;
 import io.javalin.http.InternalServerErrorResponse;
 
 /**
@@ -115,7 +114,7 @@ public class Server {
      * and  port you're actually using, if they are different.)
      */
     Javalin server = Javalin.create(config ->
-      config.plugins.register(new RouteOverviewPlugin("/api"))
+      config.bundledPlugins.enableRouteOverview("/api")
     );
 
     // Configure the MongoDB client and the Javalin server to shut down gracefully.
