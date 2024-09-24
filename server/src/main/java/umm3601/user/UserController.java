@@ -29,6 +29,7 @@ import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 import umm3601.Controller;
+
 /**
  * Controller that manages requests for info about users.
  */
@@ -84,7 +85,8 @@ public class UserController implements Controller {
   }
 
   /**
-   * Set the JSON body of the response to be a list of all the users returned from the database
+   * Set the JSON body of the response to be a list of all the users returned from
+   * the database
    * that match any requested filters and ordering
    *
    * @param ctx a Javalin HTTP context
@@ -98,12 +100,14 @@ public class UserController implements Controller {
     // properties, return those sorted in the specified manner, and put the
     // results into an initially empty ArrayList.
     ArrayList<User> matchingUsers = userCollection
-      .find(combinedFilter)
-      .sort(sortingOrder)
-      .into(new ArrayList<>());
+        .find(combinedFilter)
+        .sort(sortingOrder)
+        .into(new ArrayList<>());
 
-    // Set the JSON body of the response to be the list of users returned by the database.
-    // According to the Javalin documentation (https://javalin.io/documentation#context),
+    // Set the JSON body of the response to be the list of users returned by the
+    // database.
+    // According to the Javalin documentation
+    // (https://javalin.io/documentation#context),
     // this calls result(jsonString), and also sets content type to json
     ctx.json(matchingUsers);
 
@@ -120,18 +124,19 @@ public class UserController implements Controller {
    * the specified values for those fields.
    *
    * @param ctx a Javalin HTTP context, which contains the query parameters
-   *    used to construct the filter
+   *            used to construct the filter
    * @return a Bson filter document that can be used in the `find` method
-   *   to filter the database collection of users
+   *         to filter the database collection of users
    */
   private Bson constructFilter(Context ctx) {
     List<Bson> filters = new ArrayList<>(); // start with an empty list of filters
 
     if (ctx.queryParamMap().containsKey(AGE_KEY)) {
       int targetAge = ctx.queryParamAsClass(AGE_KEY, Integer.class)
-        .check(it -> it > 0, "User's age must be greater than zero")
-        .check(it -> it < REASONABLE_AGE_LIMIT, "User's age must be less than " + REASONABLE_AGE_LIMIT)
-        .get();
+          .check(it -> it > 0, "User's age must be greater than zero; you provided " + ctx.queryParam(AGE_KEY))
+          .check(it -> it < REASONABLE_AGE_LIMIT,
+              "User's age must be less than " + REASONABLE_AGE_LIMIT + "; you provided " + ctx.queryParam(AGE_KEY))
+          .get();
       filters.add(eq(AGE_KEY, targetAge));
     }
     if (ctx.queryParamMap().containsKey(COMPANY_KEY)) {
@@ -140,8 +145,8 @@ public class UserController implements Controller {
     }
     if (ctx.queryParamMap().containsKey(ROLE_KEY)) {
       String role = ctx.queryParamAsClass(ROLE_KEY, String.class)
-        .check(it -> it.matches(ROLE_REGEX), "User must have a legal user role")
-        .get();
+          .check(it -> it.matches(ROLE_REGEX), "User must have a legal user role")
+          .get();
       filters.add(eq(ROLE_KEY, role));
     }
 
@@ -162,9 +167,9 @@ public class UserController implements Controller {
    * query parameter is not present, it defaults to "asc".
    *
    * @param ctx a Javalin HTTP context, which contains the query parameters
-   *   used to construct the sorting order
+   *            used to construct the sorting order
    * @return a Bson sorting document that can be used in the `sort` method
-   *  to sort the database collection of users
+   *         to sort the database collection of users
    */
   private Bson constructSortingOrder(Context ctx) {
     // Sort the results. Use the `sortby` query param (default "name")
@@ -172,7 +177,7 @@ public class UserController implements Controller {
     // "asc") to specify the sort order.
     String sortBy = Objects.requireNonNullElse(ctx.queryParam("sortby"), "name");
     String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortorder"), "asc");
-    Bson sortingOrder = sortOrder.equals("desc") ?  Sorts.descending(sortBy) : Sorts.ascending(sortBy);
+    Bson sortingOrder = sortOrder.equals("desc") ? Sorts.descending(sortBy) : Sorts.ascending(sortBy);
     return sortingOrder;
   }
 
@@ -181,24 +186,29 @@ public class UserController implements Controller {
    * returned from the database, grouped by company
    *
    * This "returns" a list of user names and IDs, grouped by company in the JSON
-   * body of the response. The user names and IDs are stored in `UserIdName` objects,
-   * and the company name, the number of users in that company, and the list of user
+   * body of the response. The user names and IDs are stored in `UserIdName`
+   * objects,
+   * and the company name, the number of users in that company, and the list of
+   * user
    * names and IDs are stored in `UserByCompany` objects.
    *
    * @param ctx a Javalin HTTP context that provides the query parameters
-   *   used to sort the results. We support either sorting by company name
-   *   (in either `asc` or `desc` order) or by the number of users in the
-   *   company (`count`, also in either `asc` or `desc` order).
+   *            used to sort the results. We support either sorting by company
+   *            name
+   *            (in either `asc` or `desc` order) or by the number of users in the
+   *            company (`count`, also in either `asc` or `desc` order).
    */
   public void getUsersGroupedByCompany(Context ctx) {
-    // We'll support sorting the results either by company name (in either `asc` or `desc` order)
-    // or by the number of users in the company (`count`, also in either `asc` or `desc` order).
+    // We'll support sorting the results either by company name (in either `asc` or
+    // `desc` order)
+    // or by the number of users in the company (`count`, also in either `asc` or
+    // `desc` order).
     String sortBy = Objects.requireNonNullElse(ctx.queryParam("sortBy"), "_id");
     if (sortBy.equals("company")) {
       sortBy = "_id";
     }
     String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortOrder"), "asc");
-    Bson sortingOrder = sortOrder.equals("desc") ?  Sorts.descending(sortBy) : Sorts.ascending(sortBy);
+    Bson sortingOrder = sortOrder.equals("desc") ? Sorts.descending(sortBy) : Sorts.ascending(sortBy);
 
     // The `UserByCompany` class is a simple class that has fields for the company
     // name, the number of users in that company, and a list of user names and IDs
@@ -209,30 +219,31 @@ public class UserController implements Controller {
     // of the aggregation pipeline to `UserByCompany` objects.
 
     ArrayList<UserByCompany> matchingUsers = userCollection
-      // The following aggregation pipeline groups users by company, and
-      // then counts the number of users in each company. It also collects
-      // the user names and IDs for each user in each company.
-      .aggregate(
-        List.of(
-          // Project the fields we want to use in the next step, i.e., the _id, name, and company fields
-          new Document("$project", new Document("_id", 1).append("name", 1).append("company", 1)),
-          // Group the users by company, and count the number of users in each company
-          new Document("$group", new Document("_id", "$company")
-            // Count the number of users in each company
-            .append("count", new Document("$sum", 1))
-            // Collect the user names and IDs for each user in each company
-            .append("users", new Document("$push", new Document("_id", "$_id").append("name", "$name")))),
-          // Sort the results. Use the `sortby` query param (default "company")
-          // as the field to sort by, and the query param `sortorder` (default
-          // "asc") to specify the sort order.
-          new Document("$sort", sortingOrder)
-        ),
-        // Convert the results of the aggregation pipeline to UserGroupResult objects
-        // (i.e., a list of UserGroupResult objects). It is necessary to have a Java type
-        // to convert the results to, and the JacksonMongoCollection will do this for us.
-        UserByCompany.class
-      )
-      .into(new ArrayList<>());
+        // The following aggregation pipeline groups users by company, and
+        // then counts the number of users in each company. It also collects
+        // the user names and IDs for each user in each company.
+        .aggregate(
+            List.of(
+                // Project the fields we want to use in the next step, i.e., the _id, name, and
+                // company fields
+                new Document("$project", new Document("_id", 1).append("name", 1).append("company", 1)),
+                // Group the users by company, and count the number of users in each company
+                new Document("$group", new Document("_id", "$company")
+                    // Count the number of users in each company
+                    .append("count", new Document("$sum", 1))
+                    // Collect the user names and IDs for each user in each company
+                    .append("users", new Document("$push", new Document("_id", "$_id").append("name", "$name")))),
+                // Sort the results. Use the `sortby` query param (default "company")
+                // as the field to sort by, and the query param `sortorder` (default
+                // "asc") to specify the sort order.
+                new Document("$sort", sortingOrder)),
+            // Convert the results of the aggregation pipeline to UserGroupResult objects
+            // (i.e., a list of UserGroupResult objects). It is necessary to have a Java
+            // type
+            // to convert the results to, and the JacksonMongoCollection will do this for
+            // us.
+            UserByCompany.class)
+        .into(new ArrayList<>());
 
     ctx.json(matchingUsers);
     ctx.status(HttpStatus.OK);
@@ -243,31 +254,38 @@ public class UserController implements Controller {
    * (as long as the information gives "legal" values to User fields)
    *
    * @param ctx a Javalin HTTP context that provides the user info
-   *  in the JSON body of the request
+   *            in the JSON body of the request
    */
   public void addNewUser(Context ctx) {
     /*
      * The follow chain of statements uses the Javalin validator system
      * to verify that instance of `User` provided in this context is
      * a "legal" user. It checks the following things (in order):
-     *    - The user has a value for the name (`usr.name != null`)
-     *    - The user name is not blank (`usr.name.length > 0`)
-     *    - The provided email is valid (matches EMAIL_REGEX)
-     *    - The provided age is > 0
-     *    - The provided age is < REASONABLE_AGE_LIMIT
-     *    - The provided role is valid (one of "admin", "editor", or "viewer")
-     *    - A non-blank company is provided
+     * - The user has a value for the name (`usr.name != null`)
+     * - The user name is not blank (`usr.name.length > 0`)
+     * - The provided email is valid (matches EMAIL_REGEX)
+     * - The provided age is > 0
+     * - The provided age is < REASONABLE_AGE_LIMIT
+     * - The provided role is valid (one of "admin", "editor", or "viewer")
+     * - A non-blank company is provided
      * If any of these checks fail, the validator will return a
      * `BadRequestResponse` with an appropriate error message.
      */
+    String body = ctx.body();
     User newUser = ctx.bodyValidator(User.class)
-      .check(usr -> usr.name != null && usr.name.length() > 0, "User must have a non-empty user name")
-      .check(usr -> usr.email.matches(EMAIL_REGEX), "User must have a legal email")
-      .check(usr -> usr.age > 0, "User's age must be greater than zero")
-      .check(usr -> usr.age < REASONABLE_AGE_LIMIT, "User's age must be less than " + REASONABLE_AGE_LIMIT)
-      .check(usr -> usr.role.matches(ROLE_REGEX), "User must have a legal user role")
-      .check(usr -> usr.company != null && usr.company.length() > 0, "User must have a non-empty company name")
-      .get();
+        .check(usr -> usr.name != null && usr.name.length() > 0,
+            "User must have a non-empty user name; body was " + body)
+        .check(usr -> usr.email.matches(EMAIL_REGEX),
+            "User must have a legal email; body was " + body)
+        .check(usr -> usr.age > 0,
+            "User's age must be greater than zero; body was " + body)
+        .check(usr -> usr.age < REASONABLE_AGE_LIMIT,
+            "User's age must be less than " + REASONABLE_AGE_LIMIT + "; body was " + body)
+        .check(usr -> usr.role.matches(ROLE_REGEX),
+            "User must have a legal user role; body was " + body)
+        .check(usr -> usr.company != null && usr.company.length() > 0,
+            "User must have a non-empty company name; body was " + body)
+        .get();
 
     // Generate a user avatar (you won't need this part for todos)
     newUser.avatar = generateAvatar(newUser.email);
@@ -294,13 +312,14 @@ public class UserController implements Controller {
   public void deleteUser(Context ctx) {
     String id = ctx.pathParam("id");
     DeleteResult deleteResult = userCollection.deleteOne(eq("_id", new ObjectId(id)));
-    // We should have deleted 1 or 0 users, depending on whether `id` is a valid user ID.
+    // We should have deleted 1 or 0 users, depending on whether `id` is a valid
+    // user ID.
     if (deleteResult.getDeletedCount() != 1) {
       ctx.status(HttpStatus.NOT_FOUND);
       throw new NotFoundResponse(
-        "Was unable to delete ID "
-          + id
-          + "; perhaps illegal ID or an ID for an item not in the system?");
+          "Was unable to delete ID "
+              + id
+              + "; perhaps illegal ID or an ID for an item not in the system?");
     }
     ctx.status(HttpStatus.OK);
   }
@@ -352,18 +371,18 @@ public class UserController implements Controller {
    * Setup routes for the `user` collection endpoints.
    *
    * These endpoints are:
-   *   - `GET /api/users/:id`
-   *       - Get the specified user
-   *   - `GET /api/users?age=NUMBER&company=STRING&name=STRING`
-   *      - List users, filtered using query parameters
-   *      - `age`, `company`, and `name` are optional query parameters
-   *   - `GET /api/usersByCompany`
-   *     - Get user names and IDs, possibly filtered, grouped by company
-   *   - `DELETE /api/users/:id`
-   *      - Delete the specified user
-   *   - `POST /api/users`
-   *      - Create a new user
-   *      - The user info is in the JSON body of the HTTP request
+   * - `GET /api/users/:id`
+   * - Get the specified user
+   * - `GET /api/users?age=NUMBER&company=STRING&name=STRING`
+   * - List users, filtered using query parameters
+   * - `age`, `company`, and `name` are optional query parameters
+   * - `GET /api/usersByCompany`
+   * - Get user names and IDs, possibly filtered, grouped by company
+   * - `DELETE /api/users/:id`
+   * - Delete the specified user
+   * - `POST /api/users`
+   * - Create a new user
+   * - The user info is in the JSON body of the HTTP request
    *
    * GROUPS SHOULD CREATE THEIR OWN CONTROLLERS THAT IMPLEMENT THE
    * `Controller` INTERFACE FOR WHATEVER DATA THEY'RE WORKING WITH.
@@ -372,7 +391,7 @@ public class UserController implements Controller {
    * method will then call `addRoutes` for each controller, which will
    * add the routes for that controller's data.
    *
-   * @param server The Javalin server instance
+   * @param server         The Javalin server instance
    * @param userController The controller that handles the user endpoints
    */
   public void addRoutes(Javalin server) {
