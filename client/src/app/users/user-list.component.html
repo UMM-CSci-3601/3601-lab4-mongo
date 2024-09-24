@@ -13,14 +13,14 @@
           <mat-form-field class="input-field">
             <mat-label>Name</mat-label>
             <input matInput data-test="userNameInput" placeholder="Filter by name"
-              [(ngModel)]="userName" (input)="updateFilter()">
+              [(ngModel)]="userName">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 
           <mat-form-field class="input-field">
             <mat-label>Company</mat-label>
             <input matInput data-test="userCompanyInput" placeholder="Filter by company"
-              [(ngModel)]="userCompany" (input)="updateFilter()">
+              [(ngModel)]="userCompany">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
         </div>
@@ -31,13 +31,13 @@
           <mat-form-field class="input-field">
             <mat-label>Age</mat-label>
             <input matInput data-test="userAgeInput" type="number" placeholder="Filter by age"
-              min="0" max="200" [(ngModel)]="userAge" (input)="getUsersFromServer()">
+              min="0" max="200" [(ngModel)]="userAge">
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
 
           <mat-form-field class="input-field">
             <mat-label>Role</mat-label>
-            <mat-select (selectionChange)="getUsersFromServer()" [(ngModel)]="userRole" data-test="userRoleSelect">
+            <mat-select [(ngModel)]="userRole" data-test="userRoleSelect">
               <mat-option>--</mat-option>
               <mat-option value="admin">Admin</mat-option>
               <mat-option value="editor">Editor</mat-option>
@@ -62,15 +62,15 @@
   </div>
 
   <div class="flex-row">
-    @if (serverFilteredUsers) {
+    @if (serverFilteredUsers()) {
       <div class="flex-1" >
         <!-- Switch between card and list view based on the viewType variable, set above in the mar-radio-group -->
         <div>
-          @switch (viewType) {
+          @switch (viewType()) {
             <!-- Card grid view -->
             @case ('card') {
               <div class="user-cards-container flex-row gap-8 flex-wrap">
-                @for (user of filteredUsers; track user._id) {
+                @for (user of filteredUsers(); track user._id) {
                   <app-user-card [simple]="true" class="user-card" [user]="user" ></app-user-card>
                 }
               </div>
@@ -81,9 +81,9 @@
                 <mat-card-content>
                   <mat-nav-list class="user-nav-list">
                     <h3 mat-subheader>Users</h3>
-                    @for (user of this.filteredUsers; track user._id) {
+                    @for (user of filteredUsers(); track user._id) {
                       <a mat-list-item [routerLink]="['/users', user._id]" class="user-list-item">
-                        @if (this.user.avatar) {
+                        @if (user.avatar) {
                           <img matListItemAvatar [src]="user.avatar" alt="Avatar for {{ user.name }}">
                         }
                         <span matListItemTitle mat-line class="user-list-name"> {{user.name}} </span>
