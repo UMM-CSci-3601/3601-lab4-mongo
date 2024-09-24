@@ -51,7 +51,7 @@ describe('User list', () => {
     imports: [COMMON_IMPORTS, UserListComponent, UserCardComponent],
     // providers:    [ UserService ]  // NO! Don't provide the real service!
     // Provide a test-double instead
-    providers: [{ provide: UserService, useValue: new MockUserService() }]
+    providers: [{ provide: UserService, useValue: new MockUserService() }],
 });
   });
 
@@ -79,23 +79,23 @@ describe('User list', () => {
   }));
 
   it('contains all the users', () => {
-    expect(userList.serverFilteredUsers.length).toBe(3);
+    expect(userList.serverFilteredUsers().length).toBe(3);
   });
 
   it('contains a user named \'Chris\'', () => {
-    expect(userList.serverFilteredUsers.some((user: User) => user.name === 'Chris')).toBe(true);
+    expect(userList.serverFilteredUsers().some((user: User) => user.name === 'Chris')).toBe(true);
   });
 
   it('contain a user named \'Jamie\'', () => {
-    expect(userList.serverFilteredUsers.some((user: User) => user.name === 'Jamie')).toBe(true);
+    expect(userList.serverFilteredUsers().some((user: User) => user.name === 'Jamie')).toBe(true);
   });
 
   it('doesn\'t contain a user named \'Santa\'', () => {
-    expect(userList.serverFilteredUsers.some((user: User) => user.name === 'Santa')).toBe(false);
+    expect(userList.serverFilteredUsers().some((user: User) => user.name === 'Santa')).toBe(false);
   });
 
   it('has two users that are 37 years old', () => {
-    expect(userList.serverFilteredUsers.filter((user: User) => user.age === 37).length).toBe(2);
+    expect(userList.serverFilteredUsers().filter((user: User) => user.age === 37).length).toBe(2);
   });
 });
 
@@ -125,7 +125,7 @@ describe('Misbehaving User List', () => {
     imports: [COMMON_IMPORTS, UserListComponent],
     // providers:    [ UserService ]  // NO! Don't provide the real service!
     // Provide a test-double instead
-    providers: [{ provide: UserService, useValue: userServiceStub }]
+    providers: [{ provide: UserService, useValue: userServiceStub }],
 });
   });
 
@@ -139,22 +139,16 @@ describe('Misbehaving User List', () => {
     });
   }));
 
-  it('generates an error if we don\'t set up a UserListService', () => {
-    const mockedMethod = spyOn(userList, 'getUsersFromServer').and.callThrough();
-    // Since calling either getUsers() or getUsersFiltered() return
-    // Observables that then throw exceptions, we don't expect the component
-    // to be able to get a list of users, and serverFilteredUsers should
-    // be undefined.
-    expect(userList.serverFilteredUsers)
-      .withContext('service can\'t give values to the list if it\'s not there')
-      .toBeUndefined();
-    expect(userList.getUsersFromServer)
-      .withContext('will generate the right error if we try to getUsersFromServer')
-      .toThrow();
-    expect(mockedMethod)
-      .withContext('will be called')
-      .toHaveBeenCalled();
-    expect(userList.errMsg)
+  it("generates an error if we don't set up a UserListService", () => {
+    // If the service fails, we expect the `serverFilteredUsers` signal to
+    // be an empty array of users.
+    expect(userList.serverFilteredUsers())
+      .withContext("service can't give values to the list if it's not there")
+      .toEqual([]);
+    // We also expect the `errMsg` signal to contain the "Problem contacting…"
+    // error message. (It's arguably a bit fragile to expect something specific
+    // like this; maybe we just want to expect it to be non-empty?)
+    expect(userList.errMsg())
       .withContext('the error message will be')
       .toContain('Problem contacting the server – Error Code:');
       console.log(userList.errMsg);

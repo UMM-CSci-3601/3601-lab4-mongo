@@ -1,18 +1,18 @@
 <div class="flex-row">
   <div class="flex-1">
     @if (user) {
-      <app-user-card [user]="this.user"></app-user-card>
+      <app-user-card [user]="user()"></app-user-card>
     } @else if (error) {
       <mat-card class="error-card">
         <mat-card-content>
           <h2>
-            {{ error.help }}
+            {{ error().help }}
           </h2>
           <p>
-            {{ error.message }}
+            {{ error().message }}
           </p>
           <p>
-            {{ error.httpResponse }}
+            {{ error().httpResponse }}
           </p>
         </mat-card-content>
         <mat-card-actions>

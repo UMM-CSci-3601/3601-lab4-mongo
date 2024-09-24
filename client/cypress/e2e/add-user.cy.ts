@@ -92,8 +92,11 @@ describe('Add user', () => {
 
       page.addUser(user);
 
-      // New URL should end in the 24 hex character Mongo ID of the newly added user
-      cy.url()
+      // New URL should end in the 24 hex character Mongo ID of the newly added user.
+      // We'll wait up to 10 seconds for this these `should()` assertions to succeed.
+      // Hopefully that long timeout will help ensure that our Cypress tests pass in
+      // GitHub Actions, where we're often running on slow VMs.
+      cy.url({ timeout: 10000 })
         .should('match', /\/users\/[0-9a-fA-F]{24}$/)
         .should('not.match', /\/users\/new$/);
 
@@ -115,7 +118,7 @@ describe('Add user', () => {
         age: 30,
         company: null, // The company being set to null means nothing will be typed for it
         email: 'test@example.com',
-        role: 'editor'
+        role: 'editor',
       };
 
       page.addUser(user);

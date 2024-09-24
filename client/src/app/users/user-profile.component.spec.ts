@@ -26,14 +26,14 @@ describe('UserProfileComponent', () => {
     imports: [
         RouterTestingModule,
         MatCardModule,
-        UserProfileComponent, UserCardComponent
+        UserProfileComponent,
+        UserCardComponent
     ],
     providers: [
         { provide: UserService, useValue: mockUserService },
         { provide: ActivatedRoute, useValue: activatedRoute }
     ]
-})
-      .compileComponents();
+  }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('UserProfileComponent', () => {
     // to update. Our `UserProfileComponent` subscribes to that, so
     // it should update right away.
     activatedRoute.setParamMap({ id: expectedUser._id });
-    expect(component.user).toEqual(expectedUser);
+    expect(component.user()).toEqual(expectedUser);
   });
 
   it('should navigate to correct user when the id parameter changes', () => {
@@ -61,12 +61,12 @@ describe('UserProfileComponent', () => {
     // to update. Our `UserProfileComponent` subscribes to that, so
     // it should update right away.
     activatedRoute.setParamMap({ id: expectedUser._id });
-    expect(component.user).toEqual(expectedUser);
+    expect(component.user()).toEqual(expectedUser);
 
     // Changing the paramMap should update the displayed user profile.
     expectedUser = MockUserService.testUsers[1];
     activatedRoute.setParamMap({ id: expectedUser._id });
-    expect(component.user).toEqual(expectedUser);
+    expect(component.user()).toEqual(expectedUser);
   });
 
   it('should have `null` for the user for a bad ID', () => {
@@ -75,12 +75,10 @@ describe('UserProfileComponent', () => {
     // If the given ID doesn't map to a user, we expect the service
     // to return `null`, so we would expect the component's user
     // to also be `null`.
-    expect(component.user).toBeNull();
+    expect(component.user()).toBeNull();
   });
 
   it('should set error data on observable error', () => {
-    activatedRoute.setParamMap({ id: chrisId });
-
     const mockError = { message: 'Test Error', error: { title: 'Error Title' } };
 
     // const errorResponse = { status: 500, message: 'Server error' };
@@ -91,11 +89,9 @@ describe('UserProfileComponent', () => {
       .and
       .returnValue(throwError(() => mockError));
 
-    // component.user = throwError(() => mockError) as Observable<User>;
+    activatedRoute.setParamMap({ id: chrisId });
 
-    component.ngOnInit();
-
-    expect(component.error).toEqual({
+    expect(component.error()).toEqual({
       help: 'There was a problem loading the user – try again.',
       httpResponse: mockError.message,
       message: mockError.error.title,

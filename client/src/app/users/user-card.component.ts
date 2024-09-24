@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { User } from './user';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,8 +15,6 @@ import { MatIconModule } from '@angular/material/icon';
     imports: [MatCardModule, MatButtonModule, MatListModule, MatIconModule, RouterLink]
 })
 export class UserCardComponent {
-
-  @Input() user: User;
-  @Input() simple?: boolean = false;
-
+  user = input.required<User>();
+  simple = input(false);
 }
